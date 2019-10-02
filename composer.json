@@ -1,0 +1,20 @@
+{
+    "name": "techquity/aero-product-upsells",
+    "description": "Product upselling for your Aero Store.",
+    "autoload": {
+        "psr-4": {
+            "Techquity\\ProductUpsells\\": "src/"
+        }
+    },
+	"require": {
+        "aerocommerce/core" : "^0.1",
+        "techquity/aero-product-collections" : "^0.1"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Techquity\\ProductUpsells\\ServiceProvider"
+            ]
+        }
+    }
+}
