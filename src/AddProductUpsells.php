@@ -10,7 +10,7 @@ use Aero\Responses\ResponseBuilder;
 use Illuminate\Validation\ValidationException;
 use Aero\Cart\Exceptions\CartModificationException;
 
-class AddUpsellProducts implements ResponseStep
+class AddProductUpsells implements ResponseStep
 {
     public function handle(ResponseBuilder $builder, Closure $next)
     {
