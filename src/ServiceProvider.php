@@ -25,6 +25,7 @@ class ServiceProvider extends ModuleServiceProvider
                 [
                     'collection' => 'upsells',
                     'product' => $product,
+                    'visible_only' => false,
                 ],
             ], $limit, $eager);
         }));
