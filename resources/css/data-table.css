@@ -1,0 +1,69 @@
+.paging_simple_numbers {
+    padding: 0;
+    margin: 1rem;
+    display: -webkit-box;
+    display: flex;
+    -webkit-box-pack: end;
+    justify-content: flex-end;
+    border-radius: .125rem;
+}
+
+.hide__button {
+    display: none;
+}
+
+tr:first-of-type:not(.highlighted):not(.header):hover {
+    background-color: #FFFFFF;
+}
+
+tr.selected {
+    background-color: lightgrey;
+}
+
+tr:hover {
+    background-color: #FFFFFF;
+}
+
+.paging_simple_numbers span {
+    display: flex;
+}
+
+.paginate_button {
+    border-width: 1px;
+    border-color: #d2d7da;
+    display: block;
+    text-decoration: none;
+    padding: .5rem .75rem;
+    color: #213d4f;
+    background-color: transparent;
+}
+
+.paginate_button.current {
+    font-weight: 700;
+}
+
+.dataTables_filter {
+    display: none;
+}
+
+.dataTables_length {
+    display: none;
+}
+
+.paginate_button.next {
+     border-top-right-radius: 5px;
+     border-bottom-right-radius: 5px;
+}
+
+.paginate_button.previous {
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+.dataTables_info {
+    padding-left: 20px;
+}
+
+.dataTables_scrollHead {
+    height: 37px;
+}
