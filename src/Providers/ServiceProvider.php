@@ -28,7 +28,7 @@ class ServiceProvider extends ModuleServiceProvider
     public function boot()
     {
         parent::boot();
-        
+
         $this->loadMigrationsFrom(__DIR__ . '/../../database/migrations');
         $this->loadViewsFrom(__DIR__ . '/../../resources/views', 'aero-cross-selling-module');
 
@@ -51,14 +51,15 @@ class ServiceProvider extends ModuleServiceProvider
          * This adds a crossProducrts function on the product model, allowing us to get the child products linked to the current product within that collection
          * So for example, we could get all products linked to our parent via colour, size, cross-sell etc.
          */
-        Product::macro('crossProducts', function ($collection = null) {
+        Product::macro('crossProducts', function ($collection = null, $limit = null) {
             $query = CrossProduct::where('id', '>', 0);
 
             if($collection) {
-                $collection = CrossProductCollection::find($collection);
-                if($collection) {
-                    $query = $collection->products();
-                }
+                $query = $collection->products();
+            }
+
+            if($limit) {
+                $query->limit($limit);
             }
 
             return $query->where('parent_id', $this->id)->get()->map(function($p) {
