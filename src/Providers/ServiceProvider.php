@@ -80,9 +80,9 @@ class ServiceProvider extends ModuleServiceProvider
             });
         });
 
-        TwigFunctions::add(new TwigFunction('cross_products', function (Product $product, $collection, $limit = null, $eager = null) {
+        TwigFunctions::add(new TwigFunction('cross_products', function (Product $product, $collection, $limit = null) {
             $collection = CrossProductCollection::where('name', $collection)->first();
-            return $product->crossProducts($collection->id);
+            return $product->crossProducts($collection, $limit);
         }));
     }
 
