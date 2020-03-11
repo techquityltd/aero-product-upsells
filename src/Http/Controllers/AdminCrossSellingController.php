@@ -47,7 +47,7 @@ class AdminCrossSellingController extends Controller
             $selectedCategory = $filter->facets->first()['applied'];
         }
 
-        return view('aero-cross-selling-module::admin/index', compact('products', 'searchTerm', 'sortBy', 'filters', 'categories', 'appliedFilters', 'selectedCategory'));
+        return view('aero-product-upsells::admin/index', compact('products', 'searchTerm', 'sortBy', 'filters', 'categories', 'appliedFilters', 'selectedCategory'));
     }
 
     public function collections(Request $request, $product_id) {
@@ -69,7 +69,7 @@ class AdminCrossSellingController extends Controller
 
         $sortBy = $request->input('sort');
 
-        return view('aero-cross-selling-module::admin/collections', compact('product', 'links', 'sortBy'));
+        return view('aero-product-upsells::admin/collections', compact('product', 'links', 'sortBy'));
     }
 
     public function products(Request $request, $product_id, $collection_id) {
@@ -83,12 +83,12 @@ class AdminCrossSellingController extends Controller
             Session::flash('success');
         }
 
-        return view('aero-cross-selling-module::admin/product', compact('product', 'collection', 'products', 'sortBy'));
+        return view('aero-product-upsells::admin/product', compact('product', 'collection', 'products', 'sortBy'));
     }
 
     public function add_product(Request $request, Product $product, CrossProductCollection $collection)
     {
-        return view('aero-cross-selling-module::admin/select_products', compact('product', 'collection'));
+        return view('aero-product-upsells::admin/select_products', compact('product', 'collection'));
     }
 
     public function getProductsAsJSON(Request $request) {
@@ -132,7 +132,7 @@ class AdminCrossSellingController extends Controller
     }
 
     public function create_collection(Product $product) {
-        return view('aero-cross-selling-module::admin/add_collection', compact('product'));
+        return view('aero-product-upsells::admin/add_collection', compact('product'));
     }
 
     public function store_collection(Request $request, Product $product) {
