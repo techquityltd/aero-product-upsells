@@ -1,19 +1,41 @@
 {
-    "name": "techquity/aero-product-upsells",
-    "description": "Product upselling for your Aero Store.",
+    "name": "techquity/aero-cross-selling-module",
+    "description": "A module to allow admin to add products to cross/up sell against other products",
+    "authors": [
+        {
+            "name": "Jack Pickering",
+            "email": "jack.pickering@techquity.co.uk"
+        }
+    ],
+    "require": {
+        "aerocommerce/core": "^0",
+        "aerocommerce/admin": "^0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^4.0"
+    },
     "autoload": {
         "psr-4": {
-            "Techquity\\ProductUpsells\\": "src/"
+            "AeroCrossSelling\\": "src/"
         }
     },
-	"require": {
-        "aerocommerce/core" : "^0.1",
-        "techquity/aero-product-collections" : "^0.1"
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
     },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://packages.aerocommerce.com"
+        }
+    ],
     "extra": {
-        "laravel": {
+        "laravel" : {
             "providers": [
-                "Techquity\\ProductUpsells\\ServiceProvider"
+                "AeroCrossSelling\\Providers\\ServiceProvider"
             ]
         }
     }

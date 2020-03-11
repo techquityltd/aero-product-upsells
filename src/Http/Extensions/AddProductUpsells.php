@@ -1,6 +1,6 @@
 <?php
 
-namespace Techquity\ProductUpsells;
+namespace AeroCrossSelling\Http\Extensions;
 
 use Closure;
 use Aero\Cart\CartItem;
@@ -14,6 +14,7 @@ class AddProductUpsells implements ResponseStep
 {
     public function handle(ResponseBuilder $builder, Closure $next)
     {
+        //Whenever an item is added to cart, get the additional upsells
         foreach ($builder->request->input('upsells', []) as $id => $quantity) {
             if ($quantity < 1) {
                 continue;
