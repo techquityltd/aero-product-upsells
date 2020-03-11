@@ -39,5 +39,5 @@
 @endsection
 
 @push('scripts')
-    <script src="/js/data_table.js"></script>
+    <script src="/js/data_table_prod.js"></script>
 @endpush
