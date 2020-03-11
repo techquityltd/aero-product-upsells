@@ -21,7 +21,7 @@ class ServiceProvider extends ModuleServiceProvider
     {
         // Autoload the config without needing to publish - remove if not needed.
         $this->mergeConfigFrom(
-            __DIR__ . '/../../config/config.php', 'aero-cross-selling-module'
+            __DIR__ . '/../../config/config.php', 'aero-product-upsells'
         );
     }
 
@@ -30,19 +30,19 @@ class ServiceProvider extends ModuleServiceProvider
         parent::boot();
 
         $this->loadMigrationsFrom(__DIR__ . '/../../database/migrations');
-        $this->loadViewsFrom(__DIR__ . '/../../resources/views', 'aero-cross-selling-module');
+        $this->loadViewsFrom(__DIR__ . '/../../resources/views', 'aero-product-upsells');
 
         $this->loadRoutes();
 
-        $this->publishAssets('aero-cross-selling-module');
-        $this->publishViews('aero-cross-selling-module');
-        $this->publishConfig('aero-cross-selling-module');
-        $this->publishMigrations('aero-cross-selling-module');
+        $this->publishAssets('aero-product-upsells');
+        $this->publishViews('aero-product-upsells');
+        $this->publishConfig('aero-product-upsells');
+        $this->publishMigrations('aero-product-upsells');
 
         ProductPage::extend(AttachProductUpsells::class);
         CartItemAdd::extend(AddProductUpsells::class);
 
-        AdminModule::create('aero-cross-selling-module')
+        AdminModule::create('aero-product-upsells')
             ->title('Cross-sell products')
             ->summary('Link products together in order to add them to cross-sell.')
             ->route('admin.modules.aero-cross-selling.index');

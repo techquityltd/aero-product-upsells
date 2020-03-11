@@ -75,7 +75,7 @@ class AdminCrossSellingController extends Controller
     public function products(Request $request, $product_id, $collection_id) {
         $collection = CrossProductCollection::findOrFail($collection_id);
         $product = Product::findOrFail($product_id);
-        $products = $product->crossProducts($collection_id);
+        $products = $product->crossProducts($collection);
 
         $sortBy = $request->input('sort');
 
