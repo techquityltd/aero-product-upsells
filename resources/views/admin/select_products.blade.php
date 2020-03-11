@@ -14,7 +14,7 @@
 
 @push('styles')
 {{--    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">--}}
-    <link rel="stylesheet" type="text/css" href="/vendor/aero-cross-selling-module/css/data-table.css">
+    <link rel="stylesheet" type="text/css" href="/vendor/aero-product-upsells/css/data-table.css">
 @endpush
 
 @section('content')
@@ -63,7 +63,13 @@
                     "columns": [
                         {
                             render: function (data, type, JsonResultRow, meta) {
-                                return '<img class="block w-full rounded-sm mx-auto" style="width:auto;height:30px" src="' + window.location.origin + '/storage/' + JsonResultRow.default_images[0].file + '">';
+                                let to_render = '';
+                                if(JsonResultRow.default_images.length > 0) {
+                                    to_render = '<img class="block w-full rounded-sm mx-auto" style="width:auto;height:30px" src="' + window.location.origin + '/storage/' + JsonResultRow.default_images[0].file + '">';
+                                } else {
+                                    to_render = '<img class="block w-full rounded-sm mx-auto" style="width:auto;height:30px" src="#">';
+                                }
+                                return to_render;
                             },
                             title: "Image"
                         },
