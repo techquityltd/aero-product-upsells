@@ -13,7 +13,7 @@ $(document).ready(function() {
             "columns": [
                 {
                     render: function (data, type, JsonResultRow, meta) {
-                        return '<img class="block w-full rounded-sm mx-auto" style="width:auto;height:30px" src="' + window.location.origin + '/storage/' + JsonResultRow.Image + '">';
+                        return '<img class="block w-full rounded-sm mx-auto" style="width:auto;height:30px" src="' + window.location.origin + '/image-factory/100x100/' + JsonResultRow.Image + '">';
                     },
                     title: "Image"
                 },
