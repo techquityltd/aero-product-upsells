@@ -2,38 +2,27 @@ import $ from 'jquery';
 import DataTable from 'datatables.net';
 
 $(document).ready(function() {
-    fetch('/admin/product-cross-sells/products/json')
-        .then((response) => {
-            return response.json();
-        })
-        .then((data) => {
-            sortTable(data);
-        });
+    sortTable();
 
-    function sortTable(data) {
+    function sortTable() {
         let selected_products = [];
 
         var table = $('#myTable').DataTable({
-            data: data,
+            serverSide: true,
+            ajax: '/admin/product-cross-sells/products/json',
             "columns": [
                 {
                     render: function (data, type, JsonResultRow, meta) {
-                        let to_render = '';
-                        if(JsonResultRow.default_images.length > 0) {
-                            to_render = '<img class="block w-full rounded-sm mx-auto" style="width:auto;height:30px" src="' + window.location.origin + '/storage/' + JsonResultRow.default_images[0].file + '">';
-                        } else {
-                            to_render = '<img class="block w-full rounded-sm mx-auto" style="width:auto;height:30px" src="#">';
-                        }
-                        return to_render;
+                        return '<img class="block w-full rounded-sm mx-auto" style="width:auto;height:30px" src="' + window.location.origin + '/storage/' + JsonResultRow.Image + '">';
                     },
                     title: "Image"
                 },
                 {
-                    data: "name",
+                    data: "Name",
                     title: "Name"
                 },
                 {
-                    data: "model",
+                    data: "Model",
                     title: "Model"
                 }
             ]

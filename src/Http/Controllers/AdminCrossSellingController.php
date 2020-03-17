@@ -92,8 +92,61 @@ class AdminCrossSellingController extends Controller
     }
 
     public function getProductsAsJSON(Request $request) {
-        $products = Product::all();
-        return response($products);
+        $columns = array(
+            0 =>'Image',
+            1 =>'Name',
+            2 => 'Model'
+        );
+
+        $totalData = Product::count();
+
+        $totalFiltered = $totalData;
+        $limit = $request->input('length');
+        $start = $request->input('start');
+        $order = $columns[$request->input('order.0.column')];
+        $dir = $request->input('order.0.dir');
+
+        if(empty($request->input('search.value')))
+        {
+            $products = Product::offset($start)
+                ->limit($limit)
+                ->get();
+        }
+        else {
+            $search = $request->input('search.value');
+
+            $products =  Product::where('id','LIKE',"%{$search}%")
+                ->orWhere('title', 'LIKE',"%{$search}%")
+                ->offset($start)
+                ->limit($limit)
+                ->get();
+
+            $totalFiltered = Product::where('id','LIKE',"%{$search}%")
+                ->orWhere('title', 'LIKE',"%{$search}%")
+                ->count();
+        }
+
+        $data = array();
+        if(!empty($products))
+        {
+            foreach ($products as $product)
+            {
+                $nestedData['Image'] = $product->images()->first()->file;
+                $nestedData['Name'] = $product->name;
+                $nestedData['Model'] = $product->model;
+                $nestedData['id'] = $product->id;
+                $data[] = $nestedData;
+            }
+        }
+
+        $json_data = array(
+            "draw"            => intval($request->input('draw')),
+            "recordsTotal"    => intval($totalData),
+            "recordsFiltered" => intval($totalFiltered),
+            "data"            => $data
+        );
+
+        echo json_encode($json_data);
     }
 
     public function link_products(Request $request) {

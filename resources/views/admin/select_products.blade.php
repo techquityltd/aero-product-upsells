@@ -39,5 +39,5 @@
 @endsection
 
 @push('scripts')
-    <script src="/js/data_table_prod.js"></script>
+    <script src="/vendor/aero-product-upsells/js/data_table_prod.js"></script>
 @endpush
