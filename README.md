@@ -1,7 +1,9 @@
 # Install
 
-##Add to your Aero project using the following composer command:
+Add to your Aero project using the following composer command:
+```
 composer require techquity/aero-product-upsells
+```
 
 ## Add it your project by running: 
 php artisan migrate
