@@ -5,7 +5,7 @@ namespace AeroCrossSelling\Http\Controllers;
 use Aero\Admin\Http\Controllers\Controller;
 use Aero\Catalog\Models\Product;
 use Aero\Catalog\Models\Variant;
-use Aero\Search\Repositories\ElasticProducts;
+use Aero\Search\Contracts\ProductRepository;
 use AeroCrossSelling\Models\CrossProduct;
 use AeroCrossSelling\Models\CrossProductCollection;
 use Illuminate\Http\Request;
@@ -17,18 +17,22 @@ use Illuminate\Support\Facades\Validator;
 class AdminCrossSellingController extends Controller
 {
     /**
-     * @var ElasticProducts
+     * @var \Aero\Search\Contracts\ProductRepository
      */
     private $products;
 
-    public function __construct(ElasticProducts $products)
+    public function __construct(ProductRepository $products)
     {
         $this->products = $products;
     }
 
     public function index(Request $request)
     {
-        $results = $this->products->search($request->input('q'))->toArray();
+        $results = $this->products
+        	->search($request->input('q'))
+        	->apply($request->query)
+        	->paginate()
+        	->toArray();
         $products = $results['listings'];
         $categories = $results['categories'];
         $searchTerm = $results['search_term'];
