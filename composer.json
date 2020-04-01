@@ -8,8 +8,9 @@
         }
     ],
     "require": {
+        "aerocommerce/admin": "^0",
         "aerocommerce/core": "^0",
-        "aerocommerce/admin": "^0"
+        "aerocommerce/elastic-search": "^0"
     },
     "require-dev": {
         "orchestra/testbench": "^4.0"
