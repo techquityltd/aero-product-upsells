@@ -63,7 +63,7 @@ $(document).ready(function() {
                 type: "POST",
                 url: '/admin/product-cross-sells/link',
                 data: {
-                    "_token": "{{ csrf_token() }}",
+                    "_token": $('meta[name="csrf-token"]').attr('content'),
                     'products': selected_products,
                     'product': product,
                     'collection': collection
