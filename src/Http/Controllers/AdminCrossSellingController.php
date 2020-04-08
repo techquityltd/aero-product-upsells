@@ -135,7 +135,7 @@ class AdminCrossSellingController extends Controller
         {
             foreach ($products as $product)
             {
-                $nestedData['Image'] = $product->images()->first()->file;
+                $nestedData['Image'] = isset($product->images()->first()->file) ? $product->images()->first()->file : null;
                 $nestedData['Name'] = $product->name;
                 $nestedData['Model'] = $product->model;
                 $nestedData['id'] = $product->id;
