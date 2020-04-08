@@ -120,13 +120,13 @@ class AdminCrossSellingController extends Controller
             $search = $request->input('search.value');
 
             $products =  Product::where('id','LIKE',"%{$search}%")
-                ->orWhere('title', 'LIKE',"%{$search}%")
+                ->orWhere('name', 'LIKE',"%{$search}%")
                 ->offset($start)
                 ->limit($limit)
                 ->get();
 
             $totalFiltered = Product::where('id','LIKE',"%{$search}%")
-                ->orWhere('title', 'LIKE',"%{$search}%")
+                ->orWhere('name', 'LIKE',"%{$search}%")
                 ->count();
         }
 
