@@ -6,9 +6,8 @@ $(document).ready(function() {
 
     function sortTable() {
         let selected_products = [];
-        let route = $('#myTable').attr('data-route');
-        console.log(route);
 
+        let route = $('#myTable').attr('data-route');
         var table = $('#myTable').DataTable({
             serverSide: true,
             ajax: route,
@@ -60,10 +59,11 @@ $(document).ready(function() {
         $('#add_products').on('click', function() {
             let product = $('#myTable').attr('data-product');
             let collection = $('#myTable').attr('data-collection');
+            let admin = $('#myTable').attr('data-admin');
 
             $.ajax({
                 type: "POST",
-                url: '/admin/product-cross-sells/link',
+                url: '/' + admin + '/product-cross-sells/link',
                 data: {
                     "_token": $('meta[name="csrf-token"]').attr('content'),
                     'products': selected_products,
@@ -71,7 +71,7 @@ $(document).ready(function() {
                     'collection': collection
                 },
                 success: function(data) {
-                    window.location.href = '/admin/product-cross-sells/' + product + '/' + collection + '?success=true';
+                    window.location.href = '/' + admin + '/product-cross-sells/' + product + '/' + collection + '?success=true';
                 },
                 dataType: 'json'
             });

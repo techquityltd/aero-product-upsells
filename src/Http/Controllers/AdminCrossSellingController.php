@@ -80,7 +80,6 @@ class AdminCrossSellingController extends Controller
         $collection = CrossProductCollection::findOrFail($collection_id);
         $product = Product::findOrFail($product_id);
         $products = $product->crossProducts($collection);
-
         $sortBy = $request->input('sort');
 
         if($request->get('success')) {
@@ -92,7 +91,8 @@ class AdminCrossSellingController extends Controller
 
     public function add_product(Request $request, Product $product, CrossProductCollection $collection)
     {
-        return view('aero-product-upsells::admin/select_products', compact('product', 'collection'));
+        $admin_link = config('aero-product-upsells.admin_link');
+        return view('aero-product-upsells::admin/select_products', compact('product', 'collection', 'admin_link'));
     }
 
     public function getProductsAsJSON(Request $request) {
