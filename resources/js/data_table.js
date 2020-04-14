@@ -6,10 +6,12 @@ $(document).ready(function() {
 
     function sortTable() {
         let selected_products = [];
+        let route = $('#myTable').attr('data-route');
+        console.log(route);
 
         var table = $('#myTable').DataTable({
             serverSide: true,
-            ajax: '/admin/product-cross-sells/products/json',
+            ajax: route,
             "columns": [
                 {
                     render: function (data, type, JsonResultRow, meta) {

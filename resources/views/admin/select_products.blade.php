@@ -23,7 +23,7 @@
     </div>
 
     <div class="card">
-        <table id="myTable" style="padding: 20px;" data-product="{{ $product->id }}" data-collection="{{ $collection->id }}">
+        <table id="myTable" style="padding: 20px;" data-product="{{ $product->id }}" data-collection="{{ $collection->id }}" data-route="{{ route('admin.modules.aero-cross-selling.products-json') }}">
             <tr>
                 <th>Image</th>
                 <th>Name</th>
