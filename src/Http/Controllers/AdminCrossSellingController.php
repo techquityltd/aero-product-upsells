@@ -119,13 +119,13 @@ class AdminCrossSellingController extends Controller
         else {
             $search = $request->input('search.value');
             $products =  Product::where('id','LIKE','%'.$search.'%')
-                ->orWhereRaw('LOWER(name) like ?', ['%' . $search . '%'])
+                ->orWhereRaw('LOWER(name) like ?', ['%' . strtolower($search) . '%'])
                 ->offset($start)
                 ->limit($limit)
                 ->get();
 
             $totalFiltered = Product::where('id','LIKE','%'.$search.'%')
-                ->orWhereRaw('LOWER(name) like ?', ['%' . $search . '%'])
+                ->orWhereRaw('LOWER(name) like ?', ['%' . strtolower($search) . '%'])
                 ->count();
         }
 
