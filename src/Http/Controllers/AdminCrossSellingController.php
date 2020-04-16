@@ -91,7 +91,7 @@ class AdminCrossSellingController extends Controller
 
     public function add_product(Request $request, Product $product, CrossProductCollection $collection)
     {
-        $admin_link = config('aero-product-upsells.admin_link');
+        $admin_link = config('aero.admin.slug');
         return view('aero-product-upsells::admin/select_products', compact('product', 'collection', 'admin_link'));
     }
 
@@ -107,8 +107,6 @@ class AdminCrossSellingController extends Controller
         $totalFiltered = $totalData;
         $limit = $request->input('length');
         $start = $request->input('start');
-        $order = $columns[$request->input('order.0.column')];
-        $dir = $request->input('order.0.dir');
 
         if(empty($request->input('search.value')))
         {
