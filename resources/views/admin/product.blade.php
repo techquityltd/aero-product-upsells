@@ -51,18 +51,26 @@
                 <tr>
                     <td class="py-1 pr-0 pl-4">
                         <div class="block relative text-xs">
-                            <img src="{{ ! empty($product->images) ? asset('image-factory/60x60/'.$product->images[0]['file']) : asset('modules/aerocommerce/admin/no-image.svg') }}" class="block w-full rounded-sm mx-auto" style="width:auto;height:30px" alt="{{ $product->name }}">
+                            @isset($product->images[0]['file'])
+                                <img src="{{ ! empty($product->images) ? asset('image-factory/60x60/'.$product->images[0]['file']) : asset('modules/aerocommerce/admin/no-image.svg') }}" class="block w-full rounded-sm mx-auto" style="width:auto;height:30px" alt="{{ $product->name }}">
+                            @endisset
                             <div class="absolute pin shadow-inner rounded-sm border border-background"></div>
                         </div>
                     </td>
                     <td>
-                        <p>{{ \Illuminate\Support\Str::limit($product->name, 60) }}</p>
+                        @isset($product->name)
+                            <p>{{ \Illuminate\Support\Str::limit($product->name, 60) }}</p>
+                        @endisset
                     </td>
                     <td class="whitespace-no-wrap">
-                        <p>{{ \Illuminate\Support\Str::limit($product->model, 30) }}</p>
+                        @isset($product->model)
+                            <p>{{ \Illuminate\Support\Str::limit($product->model, 30) }}</p>
+                        @endisset
                     </td>
                     <td class="whitespace-no-wrap">
-                        <p>{{ \Illuminate\Support\Str::limit($product->manufacturer['name'], 30) }}</p>
+                        @isset($product->manufacturer['name'])
+                            <p>{{ \Illuminate\Support\Str::limit($product->manufacturer['name'], 30) }}</p>
+                        @endisset
                     </td>
                     <td>
                         <div class="flex items-center justify-end">
