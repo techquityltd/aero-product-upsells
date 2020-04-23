@@ -9,6 +9,7 @@ use Illuminate\Routing\Router;
 use Aero\Catalog\Models\Product;
 use Aero\Store\Http\Responses\ProductPage;
 use Aero\Store\Http\Responses\CartItemAdd;
+use AeroCrossSelling\Console\Extensions\AddUpsellsFromCSV;
 use AeroCrossSelling\Models\CrossProduct;
 use AeroCrossSelling\Http\Extensions\AddProductUpsells;
 use AeroCrossSelling\Http\Extensions\AttachProductUpsells;
@@ -41,6 +42,8 @@ class ServiceProvider extends ModuleServiceProvider
 
         ProductPage::extend(AttachProductUpsells::class);
         CartItemAdd::extend(AddProductUpsells::class);
+        
+        ImportProductCSVPipeline::extend(AddUpsellsFromCSV::class);
 
         AdminModule::create('aero-product-upsells')
             ->title('Cross-sell products')
