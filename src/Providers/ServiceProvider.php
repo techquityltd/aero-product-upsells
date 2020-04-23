@@ -7,6 +7,7 @@ use Aero\Common\Providers\ModuleServiceProvider;
 use AeroCrossSelling\Models\CrossProductCollection;
 use Illuminate\Routing\Router;
 use Aero\Catalog\Models\Product;
+use Aero\DataPort\Commands\Pipelines\ImportProductCSVPipeline;
 use Aero\Store\Http\Responses\ProductPage;
 use Aero\Store\Http\Responses\CartItemAdd;
 use AeroCrossSelling\Console\Extensions\AddUpsellsFromCSV;
