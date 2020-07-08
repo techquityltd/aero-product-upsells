@@ -6,8 +6,9 @@ composer require techquity/aero-product-upsells
 ```
 
 ## Add it your project by running: 
-php artisan migrate
-php artisan vendor:publish --tag=aero-product-upsells
+```php artisan migrate```
+
+```php artisan vendor:publish --tag=aero-product-upsells```
 
 # Usage
 To access the collection in your Twig files:
