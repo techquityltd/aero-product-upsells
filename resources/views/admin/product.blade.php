@@ -56,13 +56,25 @@
                         </div>
                     </td>
                     <td>
-                        <p>{{ \Illuminate\Support\Str::limit($product->name, 60) }}</p>
+                        @if($product->name)
+                            <p>{{ \Illuminate\Support\Str::limit($product->name, 60) }}</p>
+                        @else
+                            <p>N/A</p>
+                        @endif
                     </td>
                     <td class="whitespace-no-wrap">
-                        <p>{{ \Illuminate\Support\Str::limit($product->model, 30) }}</p>
+                        @if($product->model)
+                            <p>{{ \Illuminate\Support\Str::limit($product->model, 30) }}</p>
+                        @else
+                            <p>N/A</p>
+                        @endif
                     </td>
                     <td class="whitespace-no-wrap">
-                        <p>{{ \Illuminate\Support\Str::limit($product->manufacturer['name'], 30) }}</p>
+                        @if($product->manufacturer)
+                            <p>{{ \Illuminate\Support\Str::limit($product->manufacturer['name'], 30)}}</p>
+                        @else
+                            <p>N/A</p>
+                        @endif
                     </td>
                     <td>
                         <div class="flex items-center justify-end">
