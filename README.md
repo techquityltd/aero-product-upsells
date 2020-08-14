@@ -23,7 +23,7 @@ To access the collection in your Twig files:
 ```
 
 You can also specify a limit on the number of products
-{% for upsell in product_upsells(product, 6) %}
+{% for upsell in product_upsells(product, 'COLLECTION_NAME', 5) %}
 ...
 
 
