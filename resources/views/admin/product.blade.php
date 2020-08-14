@@ -6,6 +6,7 @@
 @section('content')
     <div class="flex pb-2 mb-4">
         <h2 class="flex-1 m-0 p-0">Products linked to {{ $product->name }} in {{ $collection->name }}</h2>
+        <a href="{{ route('admin.modules.aero-cross-selling.product', $product) }}" class="btn btn-primary mr-2">Back</a>
         <a href="{{ route('admin.modules.aero-cross-selling.select_product', array_merge(request()->all(), ['sort' => 'name-za', 'page' => null, 'product' => $product, 'collection' => $collection])) }}" class="btn btn-secondary">@include('admin::icons.add') Link Product</a>
     </div>
 

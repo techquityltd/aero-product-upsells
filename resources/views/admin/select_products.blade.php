@@ -19,6 +19,7 @@
 @section('content')
     <div class="flex pb-2 mb-4">
         <h2 class="flex-1 m-0 p-0">Select a product to link</h2>
+        <a href="{{ route('admin.modules.aero-cross-selling.links', [$product->id, $collection->id]) }}" class="btn btn-primary mr-2">Back</a>
         <a href="#" id="add_products" class="btn btn-secondary hide__button">@include('admin::icons.add') Link Products</a>
     </div>
 
