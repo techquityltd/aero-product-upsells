@@ -14,7 +14,7 @@ composer require techquity/aero-product-upsells
 To access the collection in your Twig files:
 
 ```twig
-{% for upsell in product_upsells(product, 'COLLECTION_NAME') %}
+{% for upsell in cross_products(product, 'COLLECTION_NAME') %}
     {% set variant = upsell.variants | first %}
     
     //PRODUCT DETAILS HERE
