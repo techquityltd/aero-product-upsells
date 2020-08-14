@@ -113,10 +113,11 @@ class AdminCrossSellingController extends Controller
             $products = Product::offset($start)
                 ->limit($limit)
                 ->get();
-        }
-        else {
+        } else {
             $search = $request->input('search.value');
-            $products =  Product::where('id','LIKE','%'.$search.'%')
+
+            $products = Product::where('id','LIKE','%'.$search.'%')
+                ->orWhere('model','LIKE','%'.$search.'%')
                 ->orWhereRaw('LOWER(name) like ?', ['%' . strtolower($search) . '%'])
                 ->offset($start)
                 ->limit($limit)
