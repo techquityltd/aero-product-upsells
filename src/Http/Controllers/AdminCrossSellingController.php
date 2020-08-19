@@ -155,8 +155,9 @@ class AdminCrossSellingController extends Controller
         try {
             $product = Product::findOrFail($request->input('product'));
             $collection = CrossProductCollection::findOrFail($request->input('collection'));
-
             $products = $request->input('products');
+            $existingCount = CrossProduct::where('parent_id', $request->input('product'))->count();
+
             foreach($products as $id) {
                 $exists = CrossProduct::where('collection_id', $collection->id)->where('parent_id', $product->id)->where('child_id', $id)->count();
                 if(!$exists) {
@@ -165,6 +166,7 @@ class AdminCrossSellingController extends Controller
                     $link->parent_id = $product->id;
                     $link->child_id = $p->id;
                     $link->collection_id = $collection->id;
+                    $link->sort = $existingCount++;
                     $link->save();
                 }
             }
@@ -178,7 +180,19 @@ class AdminCrossSellingController extends Controller
     public function remove_link($link) {
         try {
             $link = CrossProduct::findOrFail($link);
+            $parent_id = $link->parent_id;
+
+            // Remove link
             $link->delete();
+
+            // Re-index existing links sort field
+            $remaining_products = CrossProduct::where('parent_id', $parent_id)->orderBy('sort', 'asc')->get();
+            $count = 0;
+
+            foreach ($remaining_products as $product) {
+                $product->sort = $count++;
+                $product->save();
+            }
 
             return redirect()->back();
         } catch (\Exception $err) {

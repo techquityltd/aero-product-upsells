@@ -66,7 +66,7 @@ class ServiceProvider extends ModuleServiceProvider
                 $query->limit($limit);
             }
 
-            return $query->where('parent_id', $this->id)->get()->map(function($p) {
+            return $query->where('parent_id', $this->id)->orderBy('sort', 'asc')->get()->map(function($p) {
                 $child = $p->child;
                 $child->cross_id = $p->id;
                 return $child;
