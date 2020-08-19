@@ -9,6 +9,7 @@ Route::get('/product-cross-sells/products/json', [AdminCrossSellingController::c
 Route::get('/product-cross-sells/{product}/collections/create', [AdminCrossSellingController::class, 'create_collection'])->name('admin.modules.aero-cross-selling.create_collection');
 Route::post('/product-cross-sells/{product}/collections/store', [AdminCrossSellingController::class, 'store_collection'])->name('admin.modules.aero-cross-selling.store_collection');
 
+Route::post('/product-cross-sells/update-sort-order', [AdminCrossSellingController::class, 'updateSortOrder'])->name('admin.modules.aero-cross-selling.update_sort_order');
 Route::post('/product-cross-sells/link', [AdminCrossSellingController::class, 'link_products'])->name('admin.modules.aero-cross-selling.link_products');
 Route::delete('/product-cross-sells/link/{link}/remove', [AdminCrossSellingController::class, 'remove_link'])->name('admin.modules.aero-cross-selling.remove_link');
 

@@ -18,6 +18,7 @@
     <div class="card p-0">
         <table>
             <tr class="header">
+                <th></th>
                 <th style="min-width:46px">&nbsp;</th>
                 <th class="w-full whitespace-no-wrap">
                     @if($sortBy === 'name-az')
@@ -48,8 +49,13 @@
                 </th>
                 <th>&nbsp;</th>
             </tr>
+
+            <tbody id="sortableTable" class="sort" data-parent-id="{{ $product->id }}">
             @forelse($products as $product)
-                <tr>
+                <tr class="sort-table-row" data-id="{{ $product->id }}">
+                    <td class="whitespace-no-wrap">
+                        <svg viewBox="0 0 320 320" xmlns="http://www.w3.org/2000/svg" fill-rule="evenodd" clip-rule="evenodd" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="1.5" class="handle h-4 max-h-full fill-current inline cursor-move"><path d="M15.92 99.97H307.4M15.92 159.97H307.4M15.92 219.97H307.4M160 99.71V35.33l-21.8 21.8 21.8-21.8 21.8 21.8M160 220.71v64.38l21.8-21.8-21.8 21.8-21.8-21.8" fill="none" stroke="#000" stroke-width="16"></path></svg>
+                    </td>
                     <td class="py-1 pr-0 pl-4">
                         <div class="block relative text-xs">
                             <img src="{{ ! empty($product->images) ? asset('image-factory/60x60/'.$product->images[0]['file']) : asset('modules/aerocommerce/admin/no-image.svg') }}" class="block w-full rounded-sm mx-auto" style="width:auto;height:30px" alt="{{ $product->name }}">
@@ -93,6 +99,45 @@
                     <td colspan="8">No products</td>
                 </tr>
             @endforelse
+        </tbody>
         </table>
     </div>
 @endsection
+
+@push('scripts')
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            $('.sort').sortable({
+                cursor: 'move',
+                axis: 'y',
+                update: function (e, ui) {
+                    href = '/admin/product-cross-sells/update-sort-order';
+                    $(this).sortable("refresh");
+                    sorted = $(this).sortable("serialize", 'id');
+                    let child_id_array = [];
+
+                    $('.sort-table-row').each(function() {
+                        child_id_array.push($(this).data('id'));
+                    })
+
+                    $.ajax({
+                        type: 'POST',
+                        url: href,
+                        data: {
+                            _token: $('form').find('input[name="_token"]').val(),
+                            sorted: sorted,
+                            child_id_array: child_id_array,
+                            parent_id: $('#sortableTable').data('parent-id')
+                        },
+                        success: function (msg) {
+
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+@endpush

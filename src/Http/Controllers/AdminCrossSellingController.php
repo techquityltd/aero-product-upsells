@@ -151,6 +151,26 @@ class AdminCrossSellingController extends Controller
         echo json_encode($json_data);
     }
 
+    public function updateSortOrder(Request $request) {
+
+       if (
+            $request->input('child_id_array') &&
+            $request->input('parent_id')
+       ) {
+           $child_ids_in_order = $request->input('child_id_array');
+           $parent_id = $request->input('parent_id');
+           $sort_count = 0;
+
+           foreach($child_ids_in_order as $child_id){
+               $child = CrossProduct::where('parent_id', $parent_id)->where('child_id', $child_id)->first();
+               $child->sort = $sort_count++;
+               $child->save();
+           }
+
+           return ['success'=>true,'message'=>'Updated'];
+       }
+    }
+
     public function link_products(Request $request) {
         try {
             $product = Product::findOrFail($request->input('product'));
