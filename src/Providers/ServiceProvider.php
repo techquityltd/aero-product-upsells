@@ -5,6 +5,7 @@ namespace AeroCrossSelling\Providers;
 use Aero\Admin\AdminModule;
 use Aero\Common\Providers\ModuleServiceProvider;
 use AeroCrossSelling\Models\CrossProductCollection;
+use AeroCrossSelling\Observers\ProductObserver;
 use Illuminate\Routing\Router;
 use Aero\Catalog\Models\Product;
 use Aero\DataPort\Commands\Pipelines\ImportProductCSVPipeline;
@@ -41,6 +42,7 @@ class ServiceProvider extends ModuleServiceProvider
         $this->publishConfig('aero-product-upsells');
         $this->publishMigrations('aero-product-upsells');
 
+        Product::observe(ProductObserver::class);
         ProductPage::extend(AttachProductUpsells::class);
         CartItemAdd::extend(AddProductUpsells::class);
         
