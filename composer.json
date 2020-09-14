@@ -10,7 +10,7 @@
     "require": {
         "aerocommerce/admin": "^0",
         "aerocommerce/core": "^0",
-        "aerocommerce/elastic-search": "^0"
+        "aerocommerce/elastic-search": "*"
     },
     "require-dev": {
         "orchestra/testbench": "^4.0"
