@@ -58,7 +58,7 @@
                     </td>
                     <td class="py-1 pr-0 pl-4">
                         <div class="block relative text-xs">
-                            <img src="{{ ! empty($product->images) ? asset('image-factory/60x60/'.$product->images[0]['file']) : asset('modules/aerocommerce/admin/no-image.svg') }}" class="block w-full rounded-sm mx-auto" style="width:auto;height:30px" alt="{{ $product->name }}">
+                            <img src="{{ !$product->images->isEmpty() ? asset('image-factory/60x60/'.$product->images[0]['file']) : asset('modules/aerocommerce/admin/no-image.svg') }}" class="block w-full rounded-sm mx-auto" style="width:auto;height:30px" alt="{{ $product->name }}">
                             <div class="absolute pin shadow-inner rounded-sm border border-background"></div>
                         </div>
                     </td>
