@@ -76,6 +76,15 @@ class ServiceProvider extends ModuleServiceProvider
             });
         });
 
+
+        /**
+         * This allows you to display the sale price.
+         */
+        TwigFunctions::add(new TwigFunction('crossProduct_currency', function (float $value) {
+            $formatter = new \NumberFormatter('en_GB',  NumberFormatter::CURRENCY);
+            return $formatter->formatCurrency($value / 100, 'GBP');
+        }));
+
         /**
          * This adds a crossProductCollections function on the product model, allowing us to get the child products linked to the current product within that collection
          * So for example, we could get all products linked to our parent via colour, size, cross-sell etc.
