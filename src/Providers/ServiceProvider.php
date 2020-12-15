@@ -15,6 +15,7 @@ use AeroCrossSelling\Console\Extensions\AddUpsellsFromCSV;
 use AeroCrossSelling\Models\CrossProduct;
 use AeroCrossSelling\Http\Extensions\AddProductUpsells;
 use AeroCrossSelling\Http\Extensions\AttachProductUpsells;
+use NumberFormatter;
 use Twig\TwigFunction;
 use Aero\Store\Twig\Extensions\TwigFunctions;
 
