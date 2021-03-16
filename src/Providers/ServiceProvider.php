@@ -6,8 +6,10 @@ use Aero\Admin\AdminModule;
 use Aero\Common\Providers\ModuleServiceProvider;
 use AeroCrossSelling\Models\CrossProductCollection;
 use AeroCrossSelling\Observers\ProductObserver;
+use AeroCrossSelling\Observers\VariantObserver;
 use Illuminate\Routing\Router;
 use Aero\Catalog\Models\Product;
+use Aero\Catalog\Models\Variant;
 use Aero\DataPort\Commands\Pipelines\ImportProductCSVPipeline;
 use Aero\Store\Http\Responses\ProductPage;
 use Aero\Store\Http\Responses\CartItemAdd;
@@ -44,9 +46,10 @@ class ServiceProvider extends ModuleServiceProvider
         $this->publishMigrations('aero-product-upsells');
 
         Product::observe(ProductObserver::class);
+        Variant::observe(VariantObserver::class);
         ProductPage::extend(AttachProductUpsells::class);
         CartItemAdd::extend(AddProductUpsells::class);
-        
+
         ImportProductCSVPipeline::extend(AddUpsellsFromCSV::class);
 
         AdminModule::create('aero-product-upsells')
@@ -58,23 +61,41 @@ class ServiceProvider extends ModuleServiceProvider
          * This adds a crossProducrts function on the product model, allowing us to get the child products linked to the current product within that collection
          * So for example, we could get all products linked to our parent via colour, size, cross-sell etc.
          */
-        Product::macro('crossProducts', function ($collection = null, $limit = null) {
-            $query = CrossProduct::where('id', '>', 0);
+         Product::macro('crossProducts', function ($collection = null, $limit = null) {
+             $query = CrossProduct::where('id', '>', 0);
 
-            if($collection) {
-                $query = $collection->products();
-            }
+             if($collection) {
+                 $query = $collection->products();
+             }
 
-            if($limit) {
-                $query->limit($limit);
-            }
+             if($limit) {
+                 $query->limit($limit);
+             }
 
-            return $query->where('parent_id', $this->id)->whereHas('child')->orderBy('sort', 'asc')->get()->map(function($p) {
-                $child = $p->child;
-                $child->cross_id = $p->id;
-                return $child;
-            });
-        });
+             //->whereHasMorph('childable', [Product::class, Variant::class])
+             return $query->where('parentable_id', $this->id)->where('parentable_type', get_class($this))->orderBy('sort', 'asc')->get()->map(function($p) {
+                 $child = $p->child;
+                 return $child;
+             });
+         });
+
+         Variant::macro('crossProducts', function ($collection = null, $limit = null) {
+             $query = CrossProduct::where('id', '>', 0);
+
+             if($collection) {
+                 $query = $collection->products();
+             }
+
+             if($limit) {
+                 $query->limit($limit);
+             }
+
+             //->whereHasMorph('childable', [Product::class, Variant::class])
+             return $query->where('parentable_id', $this->id)->where('parentable_type', get_class($this))->orderBy('sort', 'asc')->get()->map(function($p) {
+                 $child = $p->child;
+                 return $child;
+             });
+         });
 
 
         /**
@@ -91,14 +112,25 @@ class ServiceProvider extends ModuleServiceProvider
          */
         Product::macro('crossProductCollections', function () {
             $query = CrossProduct::where('id', '>', 0);
-            return $query->where('parent_id', $this->id)->get()->map(function($link) {
+            return $query->where('parentable_id', $this->id)->where('parentable_type', get_class($this))->get()->map(function($link) {
                 return $link->collection;
             });
         });
 
-        TwigFunctions::add(new TwigFunction('cross_products', function (Product $product, $collection, $limit = null) {
+        Variant::macro('crossProductCollections', function () {
+            $query = CrossProduct::where('id', '>', 0);
+            return $query->where('parentable_id', $this->id)->where('parentable_type', get_class($this))->get()->map(function($link) {
+                return $link->collection;
+            });
+        });
+
+        TwigFunctions::add(new TwigFunction('cross_products', function ($crossable, $collection, $limit = null) {
             $collection = CrossProductCollection::where('name', $collection)->first();
-            return $product->crossProducts($collection, $limit);
+            return $crossable->crossProducts($collection, $limit);
+        }));
+
+        TwigFunctions::add(new TwigFunction('crossProduct_isVariant', function ($crossable) {
+            return get_class($crossable) == 'Aero\Catalog\Models\Variant';
         }));
     }
 

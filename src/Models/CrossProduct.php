@@ -10,11 +10,19 @@ class CrossProduct extends Model
     protected $table = 'cross_products';
 
     public function parent() {
-        return $this->belongsTo(Product::class, 'parent_id');
+        return $this->parentable();
     }
 
     public function child() {
-        return $this->belongsTo(Product::class, 'child_id');
+        return $this->childable();
+    }
+
+    public function parentable() {
+        return $this->morphTo();
+    }
+
+    public function childable() {
+        return $this->morphTo();
     }
 
     public function collection() {
