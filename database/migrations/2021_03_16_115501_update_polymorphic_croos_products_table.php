@@ -14,10 +14,10 @@ class AddCrossProductsTable extends Migration
     public function up()
     {
         Schema::table('cross_products', function (Blueprint $table) {
-            $table->string('childable_type')->default('\Aero\Catalog\Models\Product');
+            $table->string('childable_type')->default('Aero\Catalog\Models\Product');
             $table->renameColumn('child_id', 'childable_id');
 
-            $table->string('parentable_type')->default('\Aero\Catalog\Models\Product');
+            $table->string('parentable_type')->default('Aero\Catalog\Models\Product');
             $table->renameColumn('parent_id', 'parentable_id');
         });
     }
