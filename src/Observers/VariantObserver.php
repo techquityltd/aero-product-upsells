@@ -13,9 +13,9 @@ class VariantObserver
      * @param  \App\Product  $product
      * @return void
      */
-    public function deleted(Product $product)
+    public function deleted(Variant $variant)
     {
         // Delete any instances where this variant is used in upselling as it doesn't exist anymore
-        CrossProduct::where('childable_id', $product->id)->where('childable_type', '\Aero\Catalog\Models\Variant')->delete();
+        CrossProduct::where('childable_id', $variant->id)->where('childable_type', 'Aero\Catalog\Models\Variant')->delete();
     }
 }

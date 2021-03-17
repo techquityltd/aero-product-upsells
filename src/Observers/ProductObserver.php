@@ -16,6 +16,6 @@ class ProductObserver
     public function deleted(Product $product)
     {
         // Delete any instances where this product is used in upselling as it doesn't exist anymore
-        CrossProduct::where('childable_id', $product->id)->where('childable_type', '\Aero\Catalog\Models\Product')->delete();
+        CrossProduct::where('childable_id', $product->id)->where('childable_type', 'Aero\Catalog\Models\Product')->delete();
     }
 }
