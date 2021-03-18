@@ -13,7 +13,7 @@ class AddUpsellsFromCSV
     {
         $items = collect($content->row);
 
-        $groupName = $this->fieldName($items->last());
+        $groupName = $this->fieldName($items->last()->keys());
 
         $product = Product::where('model', $items->model)->first();
         $variant = Variant::where('sku', $items->model)->first();
