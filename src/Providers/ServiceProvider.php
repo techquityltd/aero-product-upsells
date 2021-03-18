@@ -76,6 +76,8 @@ class ServiceProvider extends ModuleServiceProvider
              return $query->where('parentable_id', $this->id)->where('parentable_type', get_class($this))->orderBy('sort', 'asc')->get()->map(function($p) {
                  $child = $p->child;
                  return $child;
+             })->reject(function ($item) {
+                return empty($item);
              });
          });
 
@@ -94,6 +96,8 @@ class ServiceProvider extends ModuleServiceProvider
              return $query->where('parentable_id', $this->id)->where('parentable_type', get_class($this))->orderBy('sort', 'asc')->get()->map(function($p) {
                  $child = $p->child;
                  return $child;
+             })->reject(function ($item) {
+                return empty($item);
              });
          });
 
