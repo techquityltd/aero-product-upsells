@@ -3,6 +3,7 @@
 namespace AeroCrossSelling\Console\Extensions;
 
 use Aero\Catalog\Models\Product;
+use Aero\Catalog\Models\Variant;
 use AeroCrossSelling\Models\CrossProductCollection;
 use Illuminate\Support\Str;
 
@@ -23,11 +24,7 @@ class AddUpsellsFromCSV
 
                     $group = $this->findOrCreateCollection($groupName);
 
-                    if (! $group->products()->whereHas('parent', static function ($query) use ($content) {
-                        $query->where('id', $content->product->id);
-                    })->whereHas('child', static function ($query) use ($related) {
-                        $query->where('id', $related->id);
-                    })->exists()) {
+                    if (! $group->products()->whereHasMorph('parentable', [Product::class, Variant::class])->whereHasMorph('childable', [Product::class, Variant::class])->exists()) {
                         $link = $group->products()->make();
                         $link->parent()->associate($content->product);
                         $link->child()->associate($related);
