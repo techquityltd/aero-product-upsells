@@ -17,9 +17,13 @@ class AddUpsellsFromCSV
 
         if ($fields->isNotEmpty()) {
             $fields->each(function ($value, $key) use ($content) {
-                $related = Product::where('model', $value)->first();
+                $product = Product::where('model', $value)->first();
+                $variant = Variant::where('sku', $value)->first();
+
+                $related = $variant ? $variant : $product;
 
                 if ($related) {
+
                     $groupName = $this->fieldName($key);
 
                     $group = $this->findOrCreateCollection($groupName);
@@ -30,7 +34,9 @@ class AddUpsellsFromCSV
                         $link->child()->associate($related);
                         $link->save();
                     }
+
                 }
+
             });
         }
     }
