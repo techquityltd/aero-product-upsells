@@ -11,33 +11,39 @@ class AddUpsellsFromCSV
 {
     public function handle($content): void
     {
-        $fields = collect($content->row)->filter(static function ($_, $key) {
-            return Str::startsWith($key, ['upsell:', 'Upsell:']);
-        });
+        $items = collect($content->row);
 
-        if ($fields->isNotEmpty()) {
-            $fields->each(function ($value, $key) use ($content) {
-                $product = Product::where('model', $value)->first();
-                $variant = Variant::where('sku', $value)->first();
+        $groupName = $this->fieldName($items->last());
 
-                $related = $variant ? $variant : $product;
+        $product = Product::where('model', $items->model)->first();
+        $variant = Variant::where('sku', $items->model)->first();
 
-                if ($related) {
+        $parent = $variant ? $variant : $product;
 
-                    $groupName = $this->fieldName($key);
+        $upsellName = 'Upsell:' . $groupName;
 
-                    $group = $this->findOrCreateCollection($groupName);
+        $product = Product::where('model', $items->{$upsellName})->first();
+        $variant = Variant::where('sku', $items->{$upsellName})->first();
 
-                    if (! $group->products()->whereHasMorph('parentable', [Product::class, Variant::class])->whereHasMorph('childable', [Product::class, Variant::class])->exists()) {
-                        $link = $group->products()->make();
-                        $link->parent()->associate($content->product);
-                        $link->child()->associate($related);
-                        $link->save();
-                    }
+        $child = $variant ? $variant : $product;
 
-                }
+        $group = $this->findOrCreateCollection($groupName);
 
-            });
+        $crossProduct = CrossProduct::where('collection_id', $group->id)
+            ->where('parentable_id', $parent->id)
+            ->where('parentable_type', get_class($parent))
+            ->where('childable_id', $child->id)
+            ->where('childable_type', get_class($child))
+            ->first();
+
+        if(!$crossProduct) {
+
+            //
+            $link = $group->products()->make();
+            $link->parent()->associate($parent);
+            $link->child()->associate($child);
+            $link->save();
+
         }
     }
 
