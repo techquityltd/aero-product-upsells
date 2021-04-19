@@ -128,6 +128,10 @@ class ServiceProvider extends ModuleServiceProvider
             });
         });
 
+        Variant::macro('url', function () {
+            return $this->product->url . '?variant=' . collect(json_decode($this->attributes))->pluck('id')->implode('-');
+        });
+
         TwigFunctions::add(new TwigFunction('cross_products', function ($crossable, $collection, $limit = null) {
             $collection = CrossProductCollection::where('name', $collection)->first();
 
