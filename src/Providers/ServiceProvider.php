@@ -130,7 +130,21 @@ class ServiceProvider extends ModuleServiceProvider
 
         TwigFunctions::add(new TwigFunction('cross_products', function ($crossable, $collection, $limit = null) {
             $collection = CrossProductCollection::where('name', $collection)->first();
-            return $crossable->crossProducts($collection, $limit);
+            
+            $crossable = $crossable->crossProducts($collection, $limit);
+
+            //
+            if (get_class($crossable) == 'Aero\Catalog\Models\Variant') {
+
+                if ($crossable->isEmpty()) {
+
+                    $crossable = $crossable->product->crossProducts($collection, $limit);
+
+                }
+
+            }
+
+            return $crossable;
         }));
 
         TwigFunctions::add(new TwigFunction('crossProduct_isVariant', function ($crossable) {
