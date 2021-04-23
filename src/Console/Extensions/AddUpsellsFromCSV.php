@@ -11,40 +11,74 @@ class AddUpsellsFromCSV
 {
     public function handle($content): void
     {
+        Log::info('Importing Upsells');
+
         $items = collect($content->row);
 
-        $groupName = $this->fieldName($items->last()->keys());
+        $upsells = $items->filter(static function ($_, $key) {
+            return Str::startsWith($key, ['upsell:', 'Upsell:']);
+        });
 
-        $product = Product::where('model', $items->model)->first();
-        $variant = Variant::where('sku', $items->model)->first();
+        Log::error('Upsell: ' . print_r($upsells->toArray()));
 
-        $parent = $variant ? $variant : $product;
+        $upsellName = $upsells->keys()->first();
 
-        $upsellName = 'Upsell:' . $groupName;
+        if ($upsells->isNotEmpty()) {
 
-        $product = Product::where('model', $items->{$upsellName})->first();
-        $variant = Variant::where('sku', $items->{$upsellName})->first();
+            $groupName = $this->fieldName($upsellName);
 
-        $child = $variant ? $variant : $product;
+            $model = $items->has('Model') ? $items['Model'] : null;
+            $sku = $items->has('SKU') ? $items['SKU'] : $model;
 
-        $group = $this->findOrCreateCollection($groupName);
+            $product = Product::where('model', $model)->first();
+            $variant = Variant::where('sku', $sku)->first();
 
-        $crossProduct = CrossProduct::where('collection_id', $group->id)
-            ->where('parentable_id', $parent->id)
-            ->where('parentable_type', get_class($parent))
-            ->where('childable_id', $child->id)
-            ->where('childable_type', get_class($child))
-            ->first();
+            $parent = $variant ? $variant : $product;
 
-        if(!$crossProduct) {
+            if (!$parent) {
+                Log::error('Missing Parent Product for Upsell Importing', ['model' => $model, 'Sku' => $sku]);
+                return;
+            }
 
-            //
-            $link = $group->products()->make();
-            $link->parent()->associate($parent);
-            $link->child()->associate($child);
-            $link->save();
+            foreach (explode(',', $items[$upsellName]) as $upsell) {
+
+                //
+                $product = Product::where('model', $upsell)->first();
+                $variant = Variant::where('sku', $upsell)->first();
+
+                $child = $variant ? $variant : $product;
+
+                if (!$child) {
+                    Log::error('Missing Child Product for Upsell Importing', ['model' => $upsell]);
+                    continue;
+                }
+
+                $group = $this->findOrCreateCollection($groupName);
+
+                $crossProduct = CrossProduct::where('collection_id', $group->id)
+                    ->where('parentable_id', $parent->id)
+                    ->where('parentable_type', get_class($parent))
+                    ->where('childable_id', $child->id)
+                    ->where('childable_type', get_class($child))
+                    ->first();
+
+                if(!$crossProduct) {
+
+                    //
+                    $link = $group->products()->make();
+                    $link->parentable_id = $parent->id;
+                    $link->parentable_type = get_class($parent);
+                    $link->childable_id = $child->id;
+                    $link->childable_type = get_class($child);
+                    $link->save();
+
+                }
+
+            }
 
         }
+
+        Log::info('Finished Importing Upsells');
     }
 
     /**
