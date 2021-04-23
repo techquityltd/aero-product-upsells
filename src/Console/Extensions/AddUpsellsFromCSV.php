@@ -4,8 +4,10 @@ namespace AeroCrossSelling\Console\Extensions;
 
 use Aero\Catalog\Models\Product;
 use Aero\Catalog\Models\Variant;
+use AeroCrossSelling\Models\CrossProduct;
 use AeroCrossSelling\Models\CrossProductCollection;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 
 class AddUpsellsFromCSV
 {
