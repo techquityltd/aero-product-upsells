@@ -57,7 +57,6 @@
                     <button type="submit" class="btn btn-secondary">Download</button>
                 </div>
             </form>
-            Download All 
         </div>
     </div>
 @endsection
