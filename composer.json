@@ -8,6 +8,7 @@
         }
     ],
     "require": {
+        "maatwebsite/excel": "^3.1",
         "aerocommerce/admin": "^0",
         "aerocommerce/core": "^0",
         "aerocommerce/elastic-search": "*"

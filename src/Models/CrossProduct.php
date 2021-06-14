@@ -9,15 +9,25 @@ class CrossProduct extends Model
 {
     protected $table = 'cross_products';
 
-    public function parent() {
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = ['collection_id', 'parent_id', 'child_id', 'sort'];
+
+    public function parent()
+    {
         return $this->belongsTo(Product::class, 'parent_id');
     }
 
-    public function child() {
+    public function child()
+    {
         return $this->belongsTo(Product::class, 'child_id');
     }
 
-    public function collection() {
+    public function collection()
+    {
         return $this->belongsTo(CrossProductCollection::class, 'collection_id');
     }
 }

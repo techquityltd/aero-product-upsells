@@ -6,13 +6,17 @@ use Aero\Admin\Http\Controllers\Controller;
 use Aero\Catalog\Models\Product;
 use Aero\Catalog\Models\Variant;
 use Aero\Search\Contracts\ProductRepository;
+use AeroCrossSelling\Exports\LinksExport;
+use AeroCrossSelling\Imports\LinksImport;
 use AeroCrossSelling\Models\CrossProduct;
 use AeroCrossSelling\Models\CrossProductCollection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
+use Maatwebsite\Excel\Facades\Excel;
 
 class AdminCrossSellingController extends Controller
 {
@@ -248,5 +252,39 @@ class AdminCrossSellingController extends Controller
             Log::error('Error in AdminCrossSellingController@store_collection - ' . $err->getMessage());
             dd($err);
         }
+    }
+
+    public function csv()
+    {
+        $collections = CrossProductCollection::all();
+
+        return view('aero-product-upsells::admin.csv', compact('collections'));
+    }
+
+    public function csvImport(Request $request)
+    {
+        $validatedData = $request->validate([
+            'csv' => 'required|mimes:csv,txt',
+            'unlink' => 'boolean',
+        ]);
+
+        if (isset($validatedData['unlink']) && $validatedData['unlink']) {
+            DB::table('cross_products')->truncate();
+        }
+
+        Excel::import(new LinksImport, $validatedData['csv']);
+
+        return back()->with('message', 'Links successfully created');
+    }
+
+    public function csvExport(Request $request)
+    {
+        $validatedData = $request->validate([
+            'collection' => 'array',
+        ]);
+
+        $export = new LinksExport($validatedData['collection']);
+
+        return Excel::download($export, 'cross-selling-links.csv');
     }
 }

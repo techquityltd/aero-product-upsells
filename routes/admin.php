@@ -16,3 +16,12 @@ Route::delete('/product-cross-sells/link/{link}/remove', [AdminCrossSellingContr
 Route::get('/product-cross-sells/{product_id}', [AdminCrossSellingController::class, 'collections'])->name('admin.modules.aero-cross-selling.product');
 Route::get('/product-cross-sells/{product_id}/{collection_id}', [AdminCrossSellingController::class, 'products'])->name('admin.modules.aero-cross-selling.links');
 Route::get('/product-cross-sells/{product}/{collection}/add', [AdminCrossSellingController::class, 'add_product'])->name('admin.modules.aero-cross-selling.select_product');
+
+/**
+ * Upload Import Links
+ */
+Route::prefix('admin/product-cross-sells')->name('admin.modules.aero-cross-selling.')->group(function (){
+    Route::get('/csv', [AdminCrossSellingController::class, 'csv'])->name('csv');
+    Route::post('csv/import', [AdminCrossSellingController::class, 'csvImport'])->name('csv-import');
+    Route::post('csv/export', [AdminCrossSellingController::class, 'csvExport'])->name('csv-export');
+});

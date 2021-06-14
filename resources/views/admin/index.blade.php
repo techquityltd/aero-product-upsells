@@ -71,9 +71,21 @@
 
 @section('content')
     <div class="flex pb-2 mb-4">
-        <h2 class="flex-1 m-0 p-0">Select a product to add cross-links</h2>
+        <h2 class="flex-1 m-0 p-0">
+            <a href="{{ route('admin.modules') }}" class="btn mr-4">@include('admin::icons.back') Back</a>
+            <span class="flex-1">Select a product to add cross-links</span>
+            <div class="flex">
+                <span class="mr-1 mt-1 text-sm">
+                    <a href="{{ route('admin.modules.aero-cross-selling.csv')}}" class="btn btn-secondary">
+                        Import/Export Links
+                    </a>
+                </span>
+            </div>
+        </h2>
     </div>
+
     @include('admin::partials.alerts')
+
     <div class="card p-0">
         <table>
             <tr class="header">
