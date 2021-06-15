@@ -24,4 +24,5 @@ Route::prefix('admin/product-cross-sells')->name('admin.modules.aero-cross-selli
     Route::get('/csv', [AdminCrossSellingController::class, 'csv'])->name('csv');
     Route::post('csv/import', [AdminCrossSellingController::class, 'csvImport'])->name('csv-import');
     Route::post('csv/export', [AdminCrossSellingController::class, 'csvExport'])->name('csv-export');
+    Route::get('csv/download/{download}', [AdminCrossSellingController::class, 'csvDownload'])->name('csv-download');
 });

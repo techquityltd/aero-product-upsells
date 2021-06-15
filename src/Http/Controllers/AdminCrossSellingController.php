@@ -4,19 +4,21 @@ namespace AeroCrossSelling\Http\Controllers;
 
 use Aero\Admin\Http\Controllers\Controller;
 use Aero\Catalog\Models\Product;
-use Aero\Catalog\Models\Variant;
 use Aero\Search\Contracts\ProductRepository;
 use AeroCrossSelling\Exports\LinksExport;
 use AeroCrossSelling\Imports\LinksImport;
+use AeroCrossSelling\Jobs\MarkDownloadAsComplete;
 use AeroCrossSelling\Models\CrossProduct;
 use AeroCrossSelling\Models\CrossProductCollection;
+use AeroCrossSelling\Models\CrossProductDownload;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Str;
 
 class AdminCrossSellingController extends Controller
 {
@@ -33,10 +35,10 @@ class AdminCrossSellingController extends Controller
     public function index(Request $request)
     {
         $results = $this->products
-        	->search($request->input('q'))
-        	->apply($request->query)
-        	->paginate()
-        	->toArray();
+            ->search($request->input('q'))
+            ->apply($request->query)
+            ->paginate()
+            ->toArray();
         $products = $results['listings'];
         $categories = $results['categories'];
         $searchTerm = $results['search_term'];
@@ -44,7 +46,7 @@ class AdminCrossSellingController extends Controller
         $filters = Collection::make($results['filters']);
         $appliedFilters = $filters->flatMap(static function ($group) {
             return optional($group->facets)->filter(static function ($facet) {
-                return ! empty($facet['applied']);
+                return !empty($facet['applied']);
             });
         });
         $selectedCategory = false;
@@ -58,13 +60,14 @@ class AdminCrossSellingController extends Controller
         return view('aero-product-upsells::admin/index', compact('products', 'searchTerm', 'sortBy', 'filters', 'categories', 'appliedFilters', 'selectedCategory'));
     }
 
-    public function collections(Request $request, $product_id) {
+    public function collections(Request $request, $product_id)
+    {
         $product = Product::findOrFail($product_id);
         $links = [];
 
         $collection = CrossProductCollection::all();
 
-        foreach($collection as $link) {
+        foreach ($collection as $link) {
             $items_linked = CrossProduct::where('parent_id', $product_id)->where('collection_id', $link->id)->count();
 
             $item = [];
@@ -80,13 +83,14 @@ class AdminCrossSellingController extends Controller
         return view('aero-product-upsells::admin/collections', compact('product', 'links', 'sortBy'));
     }
 
-    public function products(Request $request, $product_id, $collection_id) {
+    public function products(Request $request, $product_id, $collection_id)
+    {
         $collection = CrossProductCollection::findOrFail($collection_id);
         $product = Product::findOrFail($product_id);
         $products = $product->crossProducts($collection);
         $sortBy = $request->input('sort');
 
-        if($request->get('success')) {
+        if ($request->get('success')) {
             Session::flash('success');
         }
 
@@ -99,10 +103,11 @@ class AdminCrossSellingController extends Controller
         return view('aero-product-upsells::admin/select_products', compact('product', 'collection', 'admin_link'));
     }
 
-    public function getProductsAsJSON(Request $request) {
+    public function getProductsAsJSON(Request $request)
+    {
         $columns = array(
-            0 =>'Image',
-            1 =>'Name',
+            0 => 'Image',
+            1 => 'Name',
             2 => 'Model'
         );
 
@@ -112,31 +117,28 @@ class AdminCrossSellingController extends Controller
         $limit = $request->input('length');
         $start = $request->input('start');
 
-        if(empty($request->input('search.value')))
-        {
+        if (empty($request->input('search.value'))) {
             $products = Product::offset($start)
                 ->limit($limit)
                 ->get();
         } else {
             $search = $request->input('search.value');
 
-            $products = Product::where('id','LIKE','%'.$search.'%')
-                ->orWhere('model','LIKE','%'.$search.'%')
+            $products = Product::where('id', 'LIKE', '%' . $search . '%')
+                ->orWhere('model', 'LIKE', '%' . $search . '%')
                 ->orWhereRaw('LOWER(name) like ?', ['%' . strtolower($search) . '%'])
                 ->offset($start)
                 ->limit($limit)
                 ->get();
 
-            $totalFiltered = Product::where('id','LIKE','%'.$search.'%')
+            $totalFiltered = Product::where('id', 'LIKE', '%' . $search . '%')
                 ->orWhereRaw('LOWER(name) like ?', ['%' . strtolower($search) . '%'])
                 ->count();
         }
 
         $data = array();
-        if(!empty($products))
-        {
-            foreach ($products as $product)
-            {
+        if (!empty($products)) {
+            foreach ($products as $product) {
                 $nestedData['Image'] = isset($product->images()->first()->file) ? $product->images()->first()->file : null;
                 $nestedData['Name'] = $product->name;
                 $nestedData['Model'] = $product->model;
@@ -155,36 +157,38 @@ class AdminCrossSellingController extends Controller
         echo json_encode($json_data);
     }
 
-    public function updateSortOrder(Request $request) {
+    public function updateSortOrder(Request $request)
+    {
 
-       if (
+        if (
             $request->input('child_id_array') &&
             $request->input('parent_id')
-       ) {
-           $child_ids_in_order = $request->input('child_id_array');
-           $parent_id = $request->input('parent_id');
-           $sort_count = 0;
+        ) {
+            $child_ids_in_order = $request->input('child_id_array');
+            $parent_id = $request->input('parent_id');
+            $sort_count = 0;
 
-           foreach($child_ids_in_order as $child_id){
-               $child = CrossProduct::where('parent_id', $parent_id)->where('child_id', $child_id)->first();
-               $child->sort = $sort_count++;
-               $child->save();
-           }
+            foreach ($child_ids_in_order as $child_id) {
+                $child = CrossProduct::where('parent_id', $parent_id)->where('child_id', $child_id)->first();
+                $child->sort = $sort_count++;
+                $child->save();
+            }
 
-           return ['success'=>true,'message'=>'Updated'];
-       }
+            return ['success' => true, 'message' => 'Updated'];
+        }
     }
 
-    public function link_products(Request $request) {
+    public function link_products(Request $request)
+    {
         try {
             $product = Product::findOrFail($request->input('product'));
             $collection = CrossProductCollection::findOrFail($request->input('collection'));
             $products = $request->input('products');
             $existingCount = CrossProduct::where('parent_id', $request->input('product'))->count();
 
-            foreach($products as $id) {
+            foreach ($products as $id) {
                 $exists = CrossProduct::where('collection_id', $collection->id)->where('parent_id', $product->id)->where('child_id', $id)->count();
-                if(!$exists) {
+                if (!$exists) {
                     $p = Product::find($id);
                     $link = new CrossProduct();
                     $link->parent_id = $product->id;
@@ -201,7 +205,8 @@ class AdminCrossSellingController extends Controller
         }
     }
 
-    public function remove_link($link) {
+    public function remove_link($link)
+    {
         try {
             $link = CrossProduct::findOrFail($link);
             $parent_id = $link->parent_id;
@@ -224,16 +229,18 @@ class AdminCrossSellingController extends Controller
         }
     }
 
-    public function create_collection(Product $product) {
+    public function create_collection(Product $product)
+    {
         return view('aero-product-upsells::admin/add_collection', compact('product'));
     }
 
-    public function store_collection(Request $request, Product $product) {
+    public function store_collection(Request $request, Product $product)
+    {
         try {
             $exists = CrossProductCollection::where('name', $request->get('name'))->count();
 
-            if(!$exists) {
-                if($request->get('name')) {
+            if (!$exists) {
+                if ($request->get('name')) {
                     $collection = new CrossProductCollection();
                     $collection->name = $request->get('name');
                     $collection->save();
@@ -258,7 +265,21 @@ class AdminCrossSellingController extends Controller
     {
         $collections = CrossProductCollection::all();
 
-        return view('aero-product-upsells::admin.csv', compact('collections'));
+        $downloads = CrossProductDownload::orderBy('id', 'desc')->limit(10)->cursor()->map(function ($download) {
+
+            $download['collections'] = collect($download['collections'])->map(function ($collection) {
+                return CrossProductCollection::find($collection)->name;
+            })->implode(', ');
+
+            return $download;
+        });
+
+        return view('aero-product-upsells::admin.csv', compact('collections', 'downloads'));
+    }
+
+    public function csvDownload(CrossProductDownload $download)
+    {
+        return Storage::download($download->location);
     }
 
     public function csvImport(Request $request)
@@ -280,11 +301,21 @@ class AdminCrossSellingController extends Controller
     public function csvExport(Request $request)
     {
         $validatedData = $request->validate([
-            'collection' => 'array',
+            'collections' => 'required|array',
         ]);
 
-        $export = new LinksExport($validatedData['collection']);
+        $model = CrossProductDownload::create([
+            'location' => '/product-upsells/downloads/' . Str::random(12) . '.csv',
+            'collections' => collect($validatedData['collections'])->keys()
+        ]);
 
-        return Excel::download($export, 'cross-selling-links.csv');
+        $model->admin()->associate($request->user());
+
+        (new LinksExport($validatedData['collections'], $model))
+            ->store($model->location)->chain([
+                new MarkDownloadAsComplete($model),
+            ]);;
+
+        return back()->with('message', 'Generating export.');
     }
 }

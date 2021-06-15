@@ -45,7 +45,7 @@
                     <label for="collection-{{ $collection->id }}" class="block normal-case">
                         <label class="checkbox">
                             <input type="hidden" name="active" value="0">
-                            <input id="collection-{{ $collection->id }}" type="checkbox" name="collection[{{ $collection->id }}]" value="1">
+                            <input id="collection-{{ $collection->id }}" type="checkbox" name="collections[{{ $collection->id }}]" value="1">
                             <span></span>
                         </label> 
                         {{ $collection->name }}
@@ -57,6 +57,32 @@
                     <button type="submit" class="btn btn-secondary">Download</button>
                 </div>
             </form>
+        </div>
+
+
+        <div class="card p-0 block col-span-2">
+            <table>
+                <tr class="header">
+                    <th>Created</th>
+                    <th>Collections</th>
+                    <th>Complete</th>
+                    <th></th>
+                </tr>
+                @forelse($downloads as $download)
+                    <tr>
+                        <td>{{ $download->created_at }}</td>
+                        <td>{{ $download->collections }}</td>
+                        <td>{{ $download->complete ? 'Complete' : 'Generating'}}</td>
+                        <td>@if($download->complete)<a href ="{{ route('admin.modules.aero-cross-selling.csv-download', ['download' => $download->id]) }}">@include('admin::icons.download')@endif</a>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="4">No Downloads</td>
+                    </tr>
+                @endforelse
+            </table>
+    
+            
         </div>
     </div>
 @endsection

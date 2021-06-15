@@ -3,17 +3,23 @@
 namespace AeroCrossSelling\Exports;
 
 use AeroCrossSelling\Models\CrossProduct;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 
-class LinksExport implements FromCollection, WithHeadings, WithMapping
+class LinksExport implements FromCollection, WithHeadings, WithMapping, ShouldQueue
 {
-    protected $collection;
+    use Exportable;
 
-    public function __construct($collection)
+    protected $collection;
+    protected $model;
+
+    public function __construct($collection, $model)
     {
         $this->collection = array_keys($collection);
+        $this->model = $model;
     }
 
     public function collection()
