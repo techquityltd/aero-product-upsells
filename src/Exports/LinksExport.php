@@ -25,8 +25,8 @@ class LinksExport implements FromCollection, WithHeadings, WithMapping
     {
         return [
             $row->collection_id,
-            $row->parent_id,
-            $row->child_id,
+            $row->parent->variants()->first()->sku,
+            $row->child->variants()->first()->sku,
             $row->sort,
         ];
     }
