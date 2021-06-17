@@ -52,8 +52,15 @@
                     </label>
                 </div>
                 @endforeach
-
-                <div class="mt-6 text-center">
+                <div class="mt-6">
+                    <label for="parents" class="block">Search Parents (sku1|sku2)</label>
+                    <input type="search" id="parent" autocomplete="off" name="parent" class="text-base">
+                </div>
+                <div class="mt-6">
+                    <label for="child" class="block">Search Children (sku1|sku2)</label>
+                    <input type="search" id="child" autocomplete="off" name="child" class="text-base">
+                </div>
+                <div class="mt-6">
                     <button type="submit" class="btn btn-secondary">Download</button>
                 </div>
             </form>
@@ -65,15 +72,24 @@
                 <tr class="header">
                     <th>Created</th>
                     <th>Collections</th>
+                    <th>Admin</th>
                     <th>Complete</th>
                     <th></th>
                 </tr>
                 @forelse($downloads as $download)
                     <tr>
                         <td>{{ $download->created_at }}</td>
-                        <td>{{ $download->collections }}</td>
+                        <td>{{ $download->collection }}</td>
+                        <td>{{ $download->admin->name ?? '' }}</td>
                         <td>{{ $download->complete ? 'Complete' : 'Generating'}}</td>
-                        <td>@if($download->complete)<a href ="{{ route('admin.modules.aero-cross-selling.csv-download', ['download' => $download->id]) }}">@include('admin::icons.download')@endif</a>
+                        <td>
+                            @if($download->complete)<a href ="{{ route('admin.modules.aero-cross-selling.csv-download', ['download' => $download->id]) }}">@include('admin::icons.download')@endif
+                            <a href="#" onclick="event.preventDefault();this.nextElementSibling.submit()">@include('admin::icons.bin')</a>
+                            <form action="{{ route('admin.modules.aero-cross-selling.csv-download.delete', ['download' => $download->id]) }}" method="post" class="hidden">
+                                @csrf
+                                @method('DELETE')
+                            </form>
+                        </a>
                     </tr>
                 @empty
                     <tr>
@@ -81,7 +97,7 @@
                     </tr>
                 @endforelse
             </table>
-    
+            {{ $downloads->appends(request()->except('page'))->links() }}
             
         </div>
     </div>

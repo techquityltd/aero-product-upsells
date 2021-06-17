@@ -265,14 +265,7 @@ class AdminCrossSellingController extends Controller
     {
         $collections = CrossProductCollection::all();
 
-        $downloads = CrossProductDownload::orderBy('id', 'desc')->limit(10)->cursor()->map(function ($download) {
-
-            $download['collections'] = collect($download['collections'])->map(function ($collection) {
-                return CrossProductCollection::find($collection)->name;
-            })->implode(', ');
-
-            return $download;
-        });
+        $downloads = CrossProductDownload::orderBy('id', 'desc')->paginate(10);
 
         return view('aero-product-upsells::admin.csv', compact('collections', 'downloads'));
     }
@@ -302,20 +295,31 @@ class AdminCrossSellingController extends Controller
     {
         $validatedData = $request->validate([
             'collections' => 'required|array',
+            'parent' => '',
+            'child' => '',
         ]);
 
         $model = CrossProductDownload::create([
-            'location' => '/product-upsells/downloads/' . Str::random(12) . '.csv',
+            'location' => 'product-upsells/downloads/' . Str::random(12) . '.csv',
             'collections' => collect($validatedData['collections'])->keys()
         ]);
 
-        $model->admin()->associate($request->user());
+        $model->admin()->associate($request->user())->save();
 
-        (new LinksExport($validatedData['collections'], $model))
+        (new LinksExport($validatedData['collections'], $model, $validatedData['parent'], $validatedData['child']))
             ->store($model->location)->chain([
                 new MarkDownloadAsComplete($model),
             ]);;
 
         return back()->with('message', 'Generating export.');
+    }
+
+    public function csvDelete(Request $request, CrossProductDownload $download)
+    {
+        Storage::delete($download->location);
+
+        $download->delete();
+
+        return back()->with('message', 'Export deleted.');
     }
 }

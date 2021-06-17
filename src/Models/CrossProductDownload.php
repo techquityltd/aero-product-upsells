@@ -22,4 +22,11 @@ class CrossProductDownload extends Model
     {
         return $this->belongsTo(Admin::class);
     }
+
+    public function getCollectionAttribute()
+    {
+        return $this->collections->map(function ($row) {
+            return CrossProductCollection::find($row)->name;
+        })->implode(', ');
+    }
 }
