@@ -41,8 +41,6 @@ class LinksImport implements ToCollection, WithHeadingRow
                     'child_id' => $child->id,
                     'sort' => $row['sort'],
                 ]);
-            } else {
-                dd($row);
             }
         });
     }
