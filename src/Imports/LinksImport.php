@@ -24,17 +24,18 @@ class LinksImport implements ToCollection, WithHeadingRow
      */
     public function collection(Collection $collection)
     {
+        if ($this->unlink) {
+            CrossProduct::whereHas('parent', function ($query) use ($collection) {
+                $query->whereIn('model', $collection->pluck('parent_id'));
+            })->delete();
+        }
+
         $collection->each(function ($row) {
             $parent = $this->findProduct($row, 'parent_id');
             $child = $this->findProduct($row, 'child_id');
             $collection = CrossProductCollection::find($row['collection_id']);
 
             if ($child && $parent && $collection) {
-
-                if ($this->unlink) {
-                    CrossProduct::where('parent_id', $parent->id)->delete();
-                }
-
                 CrossProduct::firstOrCreate([
                     'collection_id' => $collection->id,
                     'parent_id' => $parent->id,
