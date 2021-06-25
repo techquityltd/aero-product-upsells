@@ -279,14 +279,15 @@ class AdminCrossSellingController extends Controller
     {
         $validatedData = $request->validate([
             'csv' => 'required|mimes:csv,txt',
-            'unlink' => 'boolean',
+            'unlink-all' => 'boolean',
+            'unlink-associated' => 'boolean'
         ]);
 
-        if (isset($validatedData['unlink']) && $validatedData['unlink']) {
+        if (isset($validatedData['unlink-all']) && $validatedData['unlink-all']) {
             DB::table('cross_products')->truncate();
         }
 
-        Excel::import(new LinksImport, $validatedData['csv']);
+        Excel::import(new LinksImport($validatedData['unlink-associated'] ?? false), $validatedData['csv']);
 
         return back()->with('message', 'Links successfully created');
     }

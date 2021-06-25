@@ -53,8 +53,8 @@ class LinksExport implements FromCollection, WithHeadings, WithMapping, ShouldQu
         if ($row->parent && $row->child) {
             return [
                 $row->collection_id,
-                $row->parent->variants()->first()->sku,
-                $row->child->variants()->first()->sku,
+                $row->parent->model,
+                $row->child->model,
                 $row->sort,
             ];
         }

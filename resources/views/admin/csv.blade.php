@@ -27,10 +27,16 @@
                 @csrf
                 <input id="csv" name="csv" type="file" accept=".csv" class="block mx-auto mt-2">
                 <br>
-                <label for="unlink">Unlink existing links</label>
-                <input id="unlink" name="unlink" onclick="toggleUnlink()" type="checkbox" value="0" class="mt-4">
-
-                <p id="unlink-warning" class="m-3 font-bold text-red-600 hidden">This will reset all existing upsell links</p>
+                <div>
+                    <label for="unlink-1">Unlink existing links</label>
+                    <input id="unlink-1" name="unlink-all" onclick="toggleUnlink(1)" type="checkbox" value="0" class="mt-4">
+                    <p id="unlink-warning-1" class="m-3 font-bold text-red-600 hidden">This will reset all existing upsell links</p>
+                </div>
+                <div>
+                    <label class="mt-3" for="unlink-2">Unlink associated links</label>
+                    <input id="unlink-2" name="unlink-associated" onclick="toggleUnlink(2)" type="checkbox" value="0" class="mt-4">
+                    <p id="unlink-warning-2" class="m-3 font-bold text-red-600 hidden">This will remove any links for the assocated parent ids</p>
+                </div>
                 <div class="mt-6 text-center">
                     <button type="submit" class="btn btn-secondary">Upload</button>
                 </div>
@@ -104,10 +110,10 @@
 @endsection
 
 <script>
-    function toggleUnlink()
+    function toggleUnlink(id)
     {
-        let element = document.getElementById('unlink');
-        let warning = document.getElementById('unlink-warning');
+        let element = document.getElementById('unlink-' + id);
+        let warning = document.getElementById('unlink-warning-' + id);
 
         if (element.value == 0) {
             warning.classList.remove('hidden');

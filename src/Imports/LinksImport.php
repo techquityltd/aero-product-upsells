@@ -2,6 +2,7 @@
 
 namespace AeroCrossSelling\Imports;
 
+use Aero\Catalog\Models\Product;
 use Aero\Catalog\Models\Variant;
 use AeroCrossSelling\Models\CrossProduct;
 use AeroCrossSelling\Models\CrossProductCollection;
@@ -11,24 +12,56 @@ use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
 class LinksImport implements ToCollection, WithHeadingRow
 {
+    protected $unlink;
+
+    public function __construct($unlink)
+    {
+        $this->unlink = (bool) $unlink;
+    }
+
     /**
-    * @param Collection $collection
-    */
+     * @param Collection $collection
+     */
     public function collection(Collection $collection)
     {
         $collection->each(function ($row) {
-            $parent = Variant::with('product')->where('sku', $row['parent_id'])->first();
-            $child = Variant::with('product')->where('sku', $row['child_id'])->first();
+            $parent = $this->findProduct($row, 'parent_id');
+            $child = $this->findProduct($row, 'child_id');
             $collection = CrossProductCollection::find($row['collection_id']);
 
             if ($child && $parent && $collection) {
+
+                if ($this->unlink) {
+                    CrossProduct::where('parent_id', $parent->id)->delete();
+                }
+
                 CrossProduct::firstOrCreate([
                     'collection_id' => $collection->id,
-                    'parent_id' => $parent->product->id,
-                    'child_id' => $child->product->id,
+                    'parent_id' => $parent->id,
+                    'child_id' => $child->id,
                     'sort' => $row['sort'],
                 ]);
+            } else {
+                dd($row);
             }
         });
+    }
+
+    protected function findProduct($row, $reference)
+    {
+        // Check Model
+        if ($model = Product::where('model', $row[$reference])->first()) {
+            return $model;
+        }
+
+        // Check SKU
+        if ($sku = Variant::with('product')->where('sku', $row[$reference])->first()) {
+            return $sku->product;
+        }
+
+        // Check ID
+        if ($id = Product::find($row[$reference])->first()) {
+            return $id;
+        }
     }
 }
