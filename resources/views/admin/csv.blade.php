@@ -59,11 +59,11 @@
                 </div>
                 @endforeach
                 <div class="mt-6">
-                    <label for="parents" class="block">Search Parents (sku1|sku2)</label>
+                    <label for="parents" class="block">Search Parents (model|model)</label>
                     <input type="search" id="parent" autocomplete="off" name="parent" class="text-base">
                 </div>
                 <div class="mt-6">
-                    <label for="child" class="block">Search Children (sku1|sku2)</label>
+                    <label for="child" class="block">Search Children (model|model)</label>
                     <input type="search" id="child" autocomplete="off" name="child" class="text-base">
                 </div>
                 <div class="mt-6">
