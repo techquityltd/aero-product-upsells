@@ -60,8 +60,8 @@ class LinksImport implements ToCollection, WithHeadingRow
         }
 
         // Check ID
-        if ($id = Product::find($row[$reference])->first()) {
-            return $id;
+        if ($id = Product::find($row[$reference])) {
+            return $id->first();
         }
     }
 }
