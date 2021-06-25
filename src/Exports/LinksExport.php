@@ -30,19 +30,11 @@ class LinksExport implements FromCollection, WithHeadings, WithMapping, ShouldQu
         $crossSell = CrossProduct::query();
 
         if ($this->parent->count()) {
-            $crossSell->whereHas('parent', function ($query) {
-                $query->whereHas('variants', function ($query) {
-                    $query->whereIn('sku', $this->parent);
-                });
-            });
+            $crossSell->whereIn('model', $this->parent);
         }
 
         if ($this->child->count()) {
-            $crossSell->whereHas('child', function ($query) {
-                $query->whereHas('variants', function ($query) {
-                    $query->whereIn('sku', $this->child);
-                });
-            });
+            $crossSell->whereIn('child', $this->child);
         }
 
         return $crossSell->whereIn('collection_id', $this->collection)->get();
