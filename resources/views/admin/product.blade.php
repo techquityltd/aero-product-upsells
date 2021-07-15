@@ -1,9 +1,13 @@
-@extends('admin::layouts.main')
+@extends('aero-product-upsells::admin.layouts.main')
 
-@section('sidebar')
-@endsection
+
+
 
 @section('content')
+
+
+
+
     <div class="flex pb-2 mb-4">
         <h2 class="flex-1 m-0 p-0">Products linked to {{ $product->name }} in {{ $collection->name }}</h2>
         <a href="{{ route('admin.modules.aero-cross-selling.product', $product) }}" class="btn btn-primary mr-2">Back</a>
@@ -18,36 +22,12 @@
     <div class="card p-0">
         <table>
             <tr class="header">
-                <th></th>
-                <th style="min-width:46px">&nbsp;</th>
-                <th class="w-full whitespace-no-wrap">
-                    @if($sortBy === 'name-az')
-                        <a href="{{ route('admin.modules.aero-cross-selling.index', array_merge(request()->all(), ['sort' => 'name-za', 'page' => null])) }}">Name<span class="no-underline ml-2">@include('admin::icons.sort-az')</span></a>
-                    @elseif($sortBy === 'name-za')
-                        <a href="{{ route('admin.modules.aero-cross-selling.index', array_merge(request()->all(), ['sort' => null, 'page' => null])) }}">Name<span class="no-underline ml-2">@include('admin::icons.sort-za')</span></a>
-                    @else
-                        <a href="{{ route('admin.modules.aero-cross-selling.index', array_merge(request()->all(), ['sort' => 'name-az', 'page' => null])) }}">Name</a>
-                    @endif
-                </th>
-                <th class="whitespace-no-wrap">
-                    @if($sortBy === 'model-az')
-                        <a href="{{ route('admin.modules.aero-cross-selling.index', array_merge(request()->all(), ['sort' => 'model-za', 'page' => null])) }}">Model<span class="no-underline ml-2">@include('admin::icons.sort-az')</span></a>
-                    @elseif($sortBy === 'model-za')
-                        <a href="{{ route('admin.modules.aero-cross-selling.index', array_merge(request()->all(), ['sort' => null, 'page' => null])) }}">Model<span class="no-underline ml-2">@include('admin::icons.sort-za')</span></a>
-                    @else
-                        <a href="{{ route('admin.modules.aero-cross-selling.index', array_merge(request()->all(), ['sort' => 'model-az', 'page' => null])) }}">Model</a>
-                    @endif
-                </th>
-                <th class="whitespace-no-wrap">
-                    @if($sortBy === 'manufacturer-az')
-                        <a href="{{ route('admin.modules.aero-cross-selling.index', array_merge(request()->all(), ['sort' => 'manufacturer-za', 'page' => null])) }}">Manufacturer<span class="no-underline ml-2">@include('admin::icons.sort-az')</span></a>
-                    @elseif($sortBy === 'manufacturer-za')
-                        <a href="{{ route('admin.modules.aero-cross-selling.index', array_merge(request()->all(), ['sort' => null, 'page' => null])) }}">Manufacturer<span class="no-underline ml-2">@include('admin::icons.sort-za')</span></a>
-                    @else
-                        <a href="{{ route('admin.modules.aero-cross-selling.index', array_merge(request()->all(), ['sort' => 'manufacturer-az', 'page' => null])) }}">Manufacturer</a>
-                    @endif
-                </th>
-                <th>&nbsp;</th>
+                <th>Sort</th>
+                <th style="min-width:46px"></th>
+                <th class="w-full whitespace-no-wrap">Attached Product</th>
+                <th class="whitespace-no-wrap">Model</th>
+                <th class="whitespace-no-wrap">Manufacturer</th>
+                <th>Delete</th>
             </tr>
 
             <tbody id="sortableTable" class="sort" data-parent-id="{{ $product->id }}">
@@ -99,7 +79,7 @@
                     <td colspan="8">No products</td>
                 </tr>
             @endforelse
-        </tbody>
+            </tbody>
         </table>
     </div>
 @endsection
