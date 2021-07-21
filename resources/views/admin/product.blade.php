@@ -65,11 +65,10 @@
                     </td>
                     <td>
                         <div class="flex items-center justify-end">
-                            <a href="{{ route('admin.modules.aero-cross-selling.remove_link', array_merge(request()->all(), ['link' => $product->cross_id])) }}"
-                               @click.prevent="confirmDeleteSubmit($refs.deleteLink{{ $product->cross_id }}, 'Are you sure?')">@include('admin::icons.bin')</a>
                             <form ref="deleteLink{{ $product->cross_id }}" action="{{ route('admin.modules.aero-cross-selling.remove_link', array_merge(request()->all(), ['link' => $product->cross_id])) }}" method="post">
                                 @csrf
                                 @method('delete')
+                                <button type="submit">@include('admin::icons.bin')</button>
                             </form>
                         </div>
                     </td>
