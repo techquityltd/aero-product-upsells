@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use AeroCrossSelling\Http\Controllers\AdminCrossSellingController;
+use AeroCrossSelling\Http\Controllers\PresetController;
 
 Route::get('/product-cross-sells', [AdminCrossSellingController::class, 'index'])->name('admin.modules.aero-cross-selling.index');
 Route::get('/product-cross-sells/products/json', [AdminCrossSellingController::class, 'getProductsAsJSON'])->name('admin.modules.aero-cross-selling.products-json');
@@ -20,10 +21,24 @@ Route::get('/product-cross-sells/{product}/{collection}/add', [AdminCrossSelling
 /**
  * Upload Import Links
  */
-Route::prefix('modules/product-cross-sells')->name('admin.modules.aero-cross-selling.')->group(function (){
+Route::prefix('modules/product-cross-sells')->name('admin.modules.aero-cross-selling.')->group(function () {
     Route::get('/csv', [AdminCrossSellingController::class, 'csv'])->name('csv');
     Route::post('/csv/import', [AdminCrossSellingController::class, 'csvImport'])->name('csv-import');
     Route::post('/csv/export', [AdminCrossSellingController::class, 'csvExport'])->name('csv-export');
     Route::get('/csv/download/{download}', [AdminCrossSellingController::class, 'csvDownload'])->name('csv-download');
     Route::delete('/csv/delete/{download}', [AdminCrossSellingController::class, 'csvDelete'])->name('csv-download.delete');
+});
+
+/**
+ * Presets feature
+ */
+Route::prefix('modules/product-cross-sells')->name('admin.modules.aero-cross-selling.presets.')->group(function () {
+    Route::get('/presets', [PresetController::class, 'index'])->name('index');
+    Route::get('/create', [PresetController::class, 'create'])->name('create');
+    Route::post('/store', [PresetController::class, 'store'])->name('store');
+    Route::get('/edit/{preset}', [PresetController::class, 'edit'])->name('edit');
+    Route::put('/edit/{preset}', [PresetController::class, 'update'])->name('update');
+    Route::delete('/delete/{preset}', [PresetController::class, 'destroy'])->name('destroy');
+
+    Route::get('/products/search', [PresetController::class, 'search'])->name('search');
 });

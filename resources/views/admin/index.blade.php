@@ -80,6 +80,11 @@
                         Import/Export Links
                     </a>
                 </span>
+                <span class="mr-1 mt-1 text-sm">
+                    <a href="{{ route('admin.modules.aero-cross-selling.presets.index')}}" class="btn btn-secondary">
+                        Configure Presets
+                    </a>
+                </span>
             </div>
         </h2>
     </div>

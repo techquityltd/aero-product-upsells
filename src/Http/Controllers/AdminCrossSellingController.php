@@ -4,6 +4,7 @@ namespace AeroCrossSelling\Http\Controllers;
 
 use Aero\Admin\Http\Controllers\Controller;
 use Aero\Catalog\Models\Product;
+use Aero\Catalog\Models\Tag;
 use Aero\Search\Contracts\ProductRepository;
 use AeroCrossSelling\Exports\LinksExport;
 use AeroCrossSelling\Imports\LinksImport;
@@ -90,11 +91,13 @@ class AdminCrossSellingController extends Controller
         $products = $product->crossProducts($collection);
         $sortBy = $request->input('sort');
 
+        $tags = Tag::cursor();
+
         if ($request->get('success')) {
             Session::flash('success');
         }
 
-        return view('aero-product-upsells::admin/product', compact('product', 'collection', 'products', 'sortBy'));
+        return view('aero-product-upsells::admin/product', compact('product', 'collection', 'products', 'sortBy', 'tags'));
     }
 
     public function add_product(Request $request, Product $product, CrossProductCollection $collection)
@@ -256,8 +259,9 @@ class AdminCrossSellingController extends Controller
                 return redirect(route('admin.modules.aero-cross-selling.product', $product));
             }
         } catch (\Exception $err) {
+            
             Log::error('Error in AdminCrossSellingController@store_collection - ' . $err->getMessage());
-            dd($err);
+            //dd($err);
         }
     }
 

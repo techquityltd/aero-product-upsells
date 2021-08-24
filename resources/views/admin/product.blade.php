@@ -1,13 +1,6 @@
 @extends('aero-product-upsells::admin.layouts.main')
 
-
-
-
 @section('content')
-
-
-
-
     <div class="flex pb-2 mb-4">
         <h2 class="flex-1 m-0 p-0">Products linked to {{ $product->name }} in {{ $collection->name }}</h2>
         <a href="{{ route('admin.modules.aero-cross-selling.product', $product) }}" class="btn btn-primary mr-2">Back</a>
@@ -19,6 +12,27 @@
     @endif
 
     @include('admin::partials.alerts')
+
+    <div>
+        <div class="mt-4">
+            <label class="block">Tags</label>
+            <searchable-select input-name="tags"
+                               class="mt-2"
+                               url="{{ route('admin.catalog.tags.search') }}"
+                               track-by="value" label="name"
+                               group-values="tags" group-label="name"
+                               :value="{{ json_encode(old('tags', $tags->map(function ($tag) {
+                                    return [
+                                        'value' => (string) $tag->id,
+                                        'name' => $tag->name,
+                                        'group' => $tag->group->name,
+                                    ];
+                                }))) }}"
+                               :multiple="true"></searchable-select>
+        </div>
+
+    </div>
+
     <div class="card p-0">
         <table>
             <tr class="header">

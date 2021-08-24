@@ -18,6 +18,8 @@ use AeroCrossSelling\Http\Extensions\AttachProductUpsells;
 use NumberFormatter;
 use Twig\TwigFunction;
 use Aero\Store\Twig\Extensions\TwigFunctions;
+use AeroCrossSelling\Models\CrossProductsPreset;
+use AeroCrossSelling\Models\CrossProductsPresetMapping;
 
 class ServiceProvider extends ModuleServiceProvider
 {
@@ -25,13 +27,20 @@ class ServiceProvider extends ModuleServiceProvider
     {
         // Autoload the config without needing to publish - remove if not needed.
         $this->mergeConfigFrom(
-            __DIR__ . '/../../config/config.php', 'aero-product-upsells'
+            __DIR__ . '/../../config/config.php',
+            'aero-product-upsells'
         );
     }
 
     public function boot()
     {
         parent::boot();
+
+        // dd(
+        //     CrossProductsPresetMapping::whereHas('products', function ($query) {
+        //         $query->where('id', 9258);
+        //     })->count()
+        // );
 
         $this->loadMigrationsFrom(__DIR__ . '/../../database/migrations');
         $this->loadViewsFrom(__DIR__ . '/../../resources/views', 'aero-product-upsells');
@@ -46,7 +55,7 @@ class ServiceProvider extends ModuleServiceProvider
         Product::observe(ProductObserver::class);
         ProductPage::extend(AttachProductUpsells::class);
         CartItemAdd::extend(AddProductUpsells::class);
-        
+
         ImportProductCSVPipeline::extend(AddUpsellsFromCSV::class);
 
         AdminModule::create('aero-product-upsells')
@@ -55,28 +64,44 @@ class ServiceProvider extends ModuleServiceProvider
             ->route('admin.modules.aero-cross-selling.index');
 
         /**
-         * This adds a crossProducrts function on the product model, allowing us to get the child products linked to the current product within that collection
+         * This adds a crossProducts function on the product model, allowing us to get the child products linked to the current product within that collection
          * So for example, we could get all products linked to our parent via colour, size, cross-sell etc.
          */
-        Product::macro('crossProducts', function ($collection = null, $limit = null) {
+        Product::macro('crossProducts', function ($collection = null, $limit = 10) {
+
+            if (!$limit) {
+                $limit = 10;
+            }
+
             $query = CrossProduct::where('id', '>', 0);
 
-            if($collection) {
+            if ($collection) {
                 $query = $collection->products();
             }
 
-            if($limit) {
+            if ($limit) {
                 $query->limit($limit);
             }
 
-            return $query->where('parent_id', $this->id)->whereHas('child')->orderBy('sort', 'asc')->get()->map(function($p) {
+            $default = $query->where('parent_id', $this->id)->whereHas('child')->orderBy('sort', 'asc')->get()->map(function ($p) {
                 $child = $p->child;
                 $child->cross_id = $p->id;
                 return $child;
             });
+
+            CrossProductsPreset::with('products')->whereHas('products', function ($query) {
+                $query->where('product_id', $this->id);
+            })->get()->map(function ($preset) use ($limit, &$default) {
+
+                $take = ($limit - $default->count() > 0) ? $limit - $default->count() : 0;
+
+                $default = $default->merge(
+                    $preset->recommended()->visible()->limit($take)->get()
+                );
+            });
+
+            return $default;
         });
-
-
         /**
          * This allows you to display the sale price.
          */
@@ -85,13 +110,23 @@ class ServiceProvider extends ModuleServiceProvider
             return $formatter->formatCurrency($value / 100, 'GBP');
         }));
 
+        // public function scopeWithStockLevel(Builder $query)
+        // {
+        //     $variants = $this->variants()->getRelated();
+
+        //     return $query->selectSub($variants
+        //         ->whereColumn($this->getForeignKey(), $this->getQualifiedKeyName())
+        //         ->selectRaw("sum({$variants->qualifyColumn('stock_level')})")
+        //         ->getQuery(), 'stock_level');
+        // }
+
         /**
          * This adds a crossProductCollections function on the product model, allowing us to get the child products linked to the current product within that collection
          * So for example, we could get all products linked to our parent via colour, size, cross-sell etc.
          */
         Product::macro('crossProductCollections', function () {
             $query = CrossProduct::where('id', '>', 0);
-            return $query->where('parent_id', $this->id)->get()->map(function($link) {
+            return $query->where('parent_id', $this->id)->get()->map(function ($link) {
                 return $link->collection;
             });
         });

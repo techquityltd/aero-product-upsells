@@ -32,6 +32,9 @@
         {
             "type": "composer",
             "url": "https://packages.aerocommerce.com"
+        },{
+            "type": "composer",
+            "url": "https://agora.aerocommerce.com"
         }
     ],
     "extra": {
