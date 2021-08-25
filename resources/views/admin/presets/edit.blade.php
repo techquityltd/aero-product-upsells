@@ -61,7 +61,7 @@
                                         url="{{ route('admin.catalog.manufacturers.search') }}"
                                         track-by="value" label="name"
                                         :value="{{ json_encode(old('product.manufacturers', $preset->products_deserialized['manufacturers'] ?? '')) }}"
-                                        :multiple="false" />
+                                        :multiple="true" />
 
                     </div>
 

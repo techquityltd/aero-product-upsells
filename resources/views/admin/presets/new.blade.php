@@ -52,7 +52,7 @@
                                         url="{{ route('admin.catalog.manufacturers.search') }}"
                                         track-by="value" label="name"
                                         :value="{{ json_encode(old('product.manufacturers')) }}"
-                                        :multiple="false" />
+                                        :multiple="true" />
 
                     </div>
 
@@ -103,7 +103,7 @@
                                         url="{{ route('admin.catalog.manufacturers.search') }}"
                                         track-by="value" label="name"
                                         :value="{{ json_encode(old('recommends.manufacturers')) }}"
-                                        :multiple="false" />
+                                        :multiple="true" />
 
                     </div>
 
