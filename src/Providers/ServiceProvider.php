@@ -89,19 +89,23 @@ class ServiceProvider extends ModuleServiceProvider
                 return $child;
             });
 
-            CrossProductsPreset::with('products')->whereHas('products', function ($query) {
+            /**
+             * Upsells update
+             */
+            $presets = CrossProductsPreset::whereHas('products', function ($query) {
                 $query->where('product_id', $this->id);
-            })->get()->map(function ($preset) use ($limit, &$default) {
+            })->get();
 
-                $take = ($limit - $default->count() > 0) ? $limit - $default->count() : 0;
+            $limit = ($limit - $default->count() > 0) ? $limit - $default->count() : 0;
 
-                $default = $default->merge(
-                    $preset->recommended()->visible()->limit($take)->get()
-                );
-            });
-
-            return $default;
+            return $default->merge(Product::query()
+                ->visible()
+                ->join('cross_products_preset_recommended', 'recommended_id', 'products.id')
+                ->whereIn('cross_products_preset_recommended.cross_products_preset_id', $presets->pluck('id'))
+                ->limit($limit)
+                ->get());
         });
+        
         /**
          * This allows you to display the sale price.
          */

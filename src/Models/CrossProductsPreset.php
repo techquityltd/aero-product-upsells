@@ -146,7 +146,9 @@ class CrossProductsPreset extends Model
         }
 
         if (isset($this->products_deserialized['manufacturers'])) {
-            $query->where('manufacturer_id', $this->products_deserialized['manufacturers']->first()['value']);
+            $query->whereHas('manufacturer', function ($query) {
+                $query->whereIn('id', $this->products_deserialized['manufacturers']->pluck('value'));
+            });
         }
 
         if (isset($this->products_deserialized['tags'])) {
@@ -173,7 +175,9 @@ class CrossProductsPreset extends Model
         }
 
         if (isset($this->recommends_deserialized['manufacturers'])) {
-            $query->where('manufacturer_id', $this->recommends_deserialized['manufacturers']->first()['value']);
+            $query->whereHas('manufacturer', function ($query) {
+                $query->whereIn('id', $this->recommends_deserialized['manufacturers']->pluck('value'));
+            });
         }
 
         if (isset($this->recommends_deserialized['tags'])) {
