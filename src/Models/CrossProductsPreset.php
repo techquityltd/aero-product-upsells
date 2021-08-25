@@ -172,7 +172,7 @@ class CrossProductsPreset extends Model
             });
         }
 
-        if (isset($this->recommends['manufacturers'])) {
+        if (isset($this->recommends_deserialized['manufacturers'])) {
             $query->where('manufacturer_id', $this->recommends_deserialized['manufacturers']->first()['value']);
         }
 
