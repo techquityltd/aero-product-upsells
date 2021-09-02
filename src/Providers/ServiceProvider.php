@@ -8,6 +8,7 @@ use AeroCrossSelling\Models\CrossProductCollection;
 use AeroCrossSelling\Observers\ProductObserver;
 use Illuminate\Routing\Router;
 use Aero\Catalog\Models\Product;
+use Aero\Catalog\Models\Variant;
 use Aero\DataPort\Commands\Pipelines\ImportProductCSVPipeline;
 use Aero\Store\Http\Responses\ProductPage;
 use Aero\Store\Http\Responses\CartItemAdd;
@@ -98,14 +99,17 @@ class ServiceProvider extends ModuleServiceProvider
 
             $limit = ($limit - $default->count() > 0) ? $limit - $default->count() : 0;
 
-            return $default->merge(Product::query()
-                ->visible()
-                ->join('cross_products_preset_recommended', 'recommended_id', 'products.id')
-                ->whereIn('cross_products_preset_recommended.cross_products_preset_id', $presets->pluck('id'))
-                ->limit($limit)
-                ->get());
+            return $default->merge(
+                Product::query()
+                    ->visible()
+                    ->whereIn('cross_products_preset_recommended.cross_products_preset_id', $presets->pluck('id'))
+                    ->join('cross_products_preset_recommended', 'recommended_id', 'products.id')
+                    ->select('products.*')
+                    ->limit($limit)
+                    ->get()
+            );
         });
-        
+
         /**
          * This allows you to display the sale price.
          */

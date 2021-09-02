@@ -34,27 +34,6 @@ class CrossProductsPreset extends Model
         );
     }
 
-    // public function recommended()
-    // {
-    //     return $this->hasMany(CrossProductsPresetRecommended::class, 'preset_id');
-    // }
-
-    /**
-     * Get the products 
-     */
-    // public function scopeAvailable($query, $product, $limit = 10)
-    // {
-    //     return $query->get()->filter(function ($preset) use ($product) {
-
-    //         return (bool) $preset->getProducts()->where('id', $product)->exists();
-
-    //     })->map(function ($preset) use ($limit) {
-
-    //         return $preset->getRecommended()->limit($limit);
-
-    //     })->first();
-    // }
-
     public function getProductsDeserializedAttribute()
     {
         return $this->unserialize($this->product_serialized);
@@ -189,7 +168,7 @@ class CrossProductsPreset extends Model
         if (isset($this->recommends_deserialized['products'])) {
             $query->whereIn('id', $this->recommends_deserialized['products']->pluck('value'));
         }
-
+  
         return $query;
     }
 }
