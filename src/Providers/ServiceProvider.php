@@ -62,7 +62,7 @@ class ServiceProvider extends ModuleServiceProvider
         AdminModule::create('aero-product-upsells')
             ->title('Cross-sell products')
             ->summary('Link products together in order to add them to cross-sell.')
-            ->route('admin.modules.aero-cross-selling.index');
+            ->route('admin.modules.aero-cross-selling.presets.index');
 
         /**
          * This adds a crossProducts function on the product model, allowing us to get the child products linked to the current product within that collection

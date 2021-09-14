@@ -94,6 +94,7 @@ class PresetController extends Controller
         $preset->products()->sync(
             $preset->getProducts()->select('id')->pluck('id'),
         );
+        
         $preset->recommended()->sync(
             $preset->getRecommended()->select('id')->pluck('id'),
         );

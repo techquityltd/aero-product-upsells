@@ -89,6 +89,7 @@
         </h2>
     </div>
 
+    <div class="card p-2 mb-2"><h3 class="m-0 p-0">Legacy cross selling will be removed in the next major release.</h3></div>
     @include('admin::partials.alerts')
 
     <div class="card p-0">

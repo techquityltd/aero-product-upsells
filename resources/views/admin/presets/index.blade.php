@@ -14,6 +14,11 @@
         </h2>
         <div class="flex">
             <span class="mr-1 mt-1 text-sm">
+                <a href="{{ route('admin.modules.aero-cross-selling.index')}}" class="btn">
+                    Lagacy Cross Selling
+                </a>
+            </span>
+            <span class="mr-1 mt-1 text-sm">
                 <a href="{{ route('admin.modules.aero-cross-selling.presets.create')}}" class="btn btn-secondary">
                     New Preset
                 </a>
