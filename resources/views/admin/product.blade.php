@@ -79,11 +79,13 @@
                     </td>
                     <td>
                         <div class="flex items-center justify-end">
-                            <form ref="deleteLink{{ $product->cross_id }}" action="{{ route('admin.modules.aero-cross-selling.remove_link', array_merge(request()->all(), ['link' => $product->cross_id])) }}" method="post">
-                                @csrf
-                                @method('delete')
-                                <button type="submit">@include('admin::icons.bin')</button>
-                            </form>
+                            @isset($product->cross_id)
+                                <form ref="deleteLink{{ $product->cross_id }}" action="{{ route('admin.modules.aero-cross-selling.remove_link', array_merge(request()->all(), ['link' => $product->cross_id])) }}" method="post">
+                                    @csrf
+                                    @method('delete')
+                                    <button type="submit">@include('admin::icons.bin')</button>
+                                </form>
+                            @endisset
                         </div>
                     </td>
                 </tr>
