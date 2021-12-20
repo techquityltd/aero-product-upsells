@@ -1,15 +1,12 @@
 @extends('aero-product-upsells::admin.layouts.main')
 
-
-
-
 @section('content')
 
-
-
-
     <div class="flex pb-2 mb-4">
-        <h2 class="flex-1 m-0 p-0">Products linked to {{ $product->name }} in {{ $collection->name }}</h2>
+        <div class="flex-1 m-0 p-0">
+            <h2 class="flex-1 m-0 p-0">Products linked to <strong class="">{{ $product->name }}</strong></h2>
+            <h3>in <strong>{{ $collection->name }}</strong></h3>
+        </div>
         <a href="{{ route('admin.modules.aero-cross-selling.product', $product) }}" class="btn btn-primary mr-2">Back</a>
         <a href="{{ route('admin.modules.aero-cross-selling.select_product', array_merge(request()->all(), ['sort' => 'name-za', 'page' => null, 'product' => $product, 'collection' => $collection])) }}" class="btn btn-secondary">@include('admin::icons.add') Link Product</a>
     </div>
@@ -62,12 +59,15 @@
                         @else
                             <p>N/A</p>
                         @endif
+
+                        {{ $product->id }} - {{ $product->cross_id }}
                     </td>
                     <td>
                         <div class="flex items-center justify-end">
-                            <a href="{{ route('admin.modules.aero-cross-selling.remove_link', array_merge(request()->all(), ['link' => $product->cross_id])) }}"
-                               @click.prevent="confirmDeleteSubmit($refs.deleteLink{{ $product->cross_id }}, 'Are you sure?')">@include('admin::icons.bin')</a>
-                            <form ref="deleteLink{{ $product->cross_id }}" action="{{ route('admin.modules.aero-cross-selling.remove_link', array_merge(request()->all(), ['link' => $product->cross_id])) }}" method="post">
+                            <a href="{{ route('admin.modules.aero-cross-selling.remove_link', array_merge(request()->all(), ['link' => $product->cross_id])) }}" onclick="event.preventDefault(); document.getElementById('delete-form-{{ $product->cross_id }}').submit();">
+                                @include('admin::icons.bin')
+                            </a>
+                            <form id="delete-form-{{ $product->cross_id }}" action="{{ route('admin.modules.aero-cross-selling.remove_link', array_merge(request()->all(), ['link' => $product->cross_id])) }}" method="POST" style="display: none;">
                                 @csrf
                                 @method('delete')
                             </form>

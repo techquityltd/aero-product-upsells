@@ -3,24 +3,23 @@
 use Illuminate\Support\Facades\Route;
 use AeroCrossSelling\Http\Controllers\AdminCrossSellingController;
 
-Route::get('/product-cross-sells', [AdminCrossSellingController::class, 'index'])->name('admin.modules.aero-cross-selling.index');
-Route::get('/product-cross-sells/products/json', [AdminCrossSellingController::class, 'getProductsAsJSON'])->name('admin.modules.aero-cross-selling.products-json');
-
-Route::get('/product-cross-sells/{product}/collections/create', [AdminCrossSellingController::class, 'create_collection'])->name('admin.modules.aero-cross-selling.create_collection');
-Route::post('/product-cross-sells/{product}/collections/store', [AdminCrossSellingController::class, 'store_collection'])->name('admin.modules.aero-cross-selling.store_collection');
-
-Route::post('/product-cross-sells/update-sort-order', [AdminCrossSellingController::class, 'updateSortOrder'])->name('admin.modules.aero-cross-selling.update_sort_order');
-Route::post('/product-cross-sells/link', [AdminCrossSellingController::class, 'link_products'])->name('admin.modules.aero-cross-selling.link_products');
-Route::delete('/product-cross-sells/link/{link}/remove', [AdminCrossSellingController::class, 'remove_link'])->name('admin.modules.aero-cross-selling.remove_link');
-
-Route::get('/product-cross-sells/{product_id}', [AdminCrossSellingController::class, 'collections'])->name('admin.modules.aero-cross-selling.product');
-Route::get('/product-cross-sells/{product_id}/{collection_id}', [AdminCrossSellingController::class, 'products'])->name('admin.modules.aero-cross-selling.links');
-Route::get('/product-cross-sells/{product}/{collection}/add', [AdminCrossSellingController::class, 'add_product'])->name('admin.modules.aero-cross-selling.select_product');
+Route::prefix('modules/product-cross-sells')->name('admin.modules.aero-cross-selling.')->group(function () {
+    Route::get('/', [AdminCrossSellingController::class, 'index'])->name('index');
+    Route::get('/products/json', [AdminCrossSellingController::class, 'getProductsAsJSON'])->name('products-json');
+    Route::get('/{product}/collections/create', [AdminCrossSellingController::class, 'create_collection'])->name('create_collection');
+    Route::post('/{product}/collections/store', [AdminCrossSellingController::class, 'store_collection'])->name('store_collection');
+    Route::post('/update-sort-order', [AdminCrossSellingController::class, 'updateSortOrder'])->name('update_sort_order');
+    Route::post('/link', [AdminCrossSellingController::class, 'link_products'])->name('link_products');
+    Route::delete('/link/{link}/remove', [AdminCrossSellingController::class, 'remove_link'])->name('remove_link');
+    Route::get('/{product_id}', [AdminCrossSellingController::class, 'collections'])->name('product');
+    Route::get('/{product_id}/{collection_id}', [AdminCrossSellingController::class, 'products'])->name('links');
+    Route::get('/{product}/{collection}/add', [AdminCrossSellingController::class, 'add_product'])->name('select_product');
+});
 
 /**
  * Upload Import Links
  */
-Route::prefix('modules/product-cross-sells')->name('admin.modules.aero-cross-selling.')->group(function (){
+Route::prefix('modules/product-cross-sells')->name('admin.modules.aero-cross-selling.')->group(function () {
     Route::get('/csv', [AdminCrossSellingController::class, 'csv'])->name('csv');
     Route::post('/csv/import', [AdminCrossSellingController::class, 'csvImport'])->name('csv-import');
     Route::post('/csv/export', [AdminCrossSellingController::class, 'csvExport'])->name('csv-export');

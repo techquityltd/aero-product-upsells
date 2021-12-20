@@ -205,10 +205,9 @@ class AdminCrossSellingController extends Controller
         }
     }
 
-    public function remove_link($link)
+    public function remove_link(CrossProduct $link)
     {
         try {
-            $link = CrossProduct::findOrFail($link);
             $parent_id = $link->parent_id;
 
             // Remove link
