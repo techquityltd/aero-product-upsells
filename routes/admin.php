@@ -19,7 +19,7 @@ Route::prefix('modules/product-cross-sells')->name('admin.modules.aero-cross-sel
 /**
  * Upload Import Links
  */
-Route::prefix('modules/product-cross-sells')->name('admin.modules.aero-cross-selling.')->group(function () {
+Route::prefix('product-cross-sells')->name('admin.modules.aero-cross-selling.')->group(function () {
     Route::get('/csv', [AdminCrossSellingController::class, 'csv'])->name('csv');
     Route::post('/csv/import', [AdminCrossSellingController::class, 'csvImport'])->name('csv-import');
     Route::post('/csv/export', [AdminCrossSellingController::class, 'csvExport'])->name('csv-export');
