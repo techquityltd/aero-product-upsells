@@ -20,7 +20,6 @@ use NumberFormatter;
 use Twig\TwigFunction;
 use Aero\Store\Twig\Extensions\TwigFunctions;
 use AeroCrossSelling\Models\CrossProductsPreset;
-use AeroCrossSelling\Models\CrossProductsPresetMapping;
 
 class ServiceProvider extends ModuleServiceProvider
 {
@@ -33,16 +32,8 @@ class ServiceProvider extends ModuleServiceProvider
         );
     }
 
-    public function boot()
+    public function setup()
     {
-        parent::boot();
-
-        // dd(
-        //     CrossProductsPresetMapping::whereHas('products', function ($query) {
-        //         $query->where('id', 9258);
-        //     })->count()
-        // );
-
         $this->loadMigrationsFrom(__DIR__ . '/../../database/migrations');
         $this->loadViewsFrom(__DIR__ . '/../../resources/views', 'aero-product-upsells');
 
@@ -118,16 +109,6 @@ class ServiceProvider extends ModuleServiceProvider
             return $formatter->formatCurrency($value / 100, 'GBP');
         }));
 
-        // public function scopeWithStockLevel(Builder $query)
-        // {
-        //     $variants = $this->variants()->getRelated();
-
-        //     return $query->selectSub($variants
-        //         ->whereColumn($this->getForeignKey(), $this->getQualifiedKeyName())
-        //         ->selectRaw("sum({$variants->qualifyColumn('stock_level')})")
-        //         ->getQuery(), 'stock_level');
-        // }
-
         /**
          * This adds a crossProductCollections function on the product model, allowing us to get the child products linked to the current product within that collection
          * So for example, we could get all products linked to our parent via colour, size, cross-sell etc.
@@ -139,9 +120,14 @@ class ServiceProvider extends ModuleServiceProvider
             });
         });
 
-        TwigFunctions::add(new TwigFunction('cross_products', function (Product $product, $collection, $limit = null) {
+        TwigFunctions::add(new TwigFunction('cross_products', function ($model, $collection, $limit = null) {
+
+            if ($model instanceof Variant) {
+                $model = $model->product;
+            }
+
             $collection = CrossProductCollection::where('name', $collection)->first();
-            return $product->crossProducts($collection, $limit);
+            return $model->crossProducts($collection, $limit);
         }));
     }
 
